@@ -1,0 +1,14 @@
+{
+    "columns": [
+        "sepal_length",
+        "sepal_width",
+        "species"
+    ],
+    "targets": [
+        "petal_length",
+        "petal_width"
+    ],
+    "metadata": {
+        "require_all_targets": true
+    }
+}

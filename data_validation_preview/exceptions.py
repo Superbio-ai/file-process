@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BaseError(ABC):
+class BaseError(ABC, Exception):
     @property
     @abstractmethod
     def message(self):
