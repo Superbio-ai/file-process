@@ -14,7 +14,7 @@ class FileProcessorBase(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def process(self, file, **kwargs) -> (any, any, any):
+    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], List[dict], List[dict]):
         raise NotImplemented
 
 
@@ -33,8 +33,8 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
         if not result:
             raise ModelFileValidationError
 
-    def process(self, file, model_csv_file: BytesIO = None, delimiter: str = None, is_cols_rows: bool = False) -> (List[str], dict, dict):
-        adata = self.read_file(file, delimiter=delimiter, is_cols_rows=is_cols_rows)
+    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], List[dict], List[dict]):
+        adata = self.read_file(file, **kwargs)
         if model_csv_file:
             self.model_file_validation(adata, model_csv_file)
         target_names, var_preview, obs_preview = self.get_preview_data(adata)
