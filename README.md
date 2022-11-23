@@ -1,2 +1,2 @@
 # file-process
-This is repository for file preprocessing, file validation and file preview
+This is repository for file validation and file preview.

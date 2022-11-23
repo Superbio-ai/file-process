@@ -53,9 +53,9 @@ class CSVFileProcessor(FileProcessorBase):
         if not are_variables_valid:
             raise ModelFileValidationVariablesError
 
-    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], [], List[dict]):
+    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], None, pd.DataFrame):
         df = self.read_file(file, **kwargs)
         if model_csv_file:
             self.model_file_validation(df, model_csv_file)
         var_names, obs_preview = self.get_preview_data(df)
-        return var_names, [], obs_preview
+        return var_names, None, obs_preview

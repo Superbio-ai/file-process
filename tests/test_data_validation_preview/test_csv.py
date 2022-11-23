@@ -47,7 +47,7 @@ class TestCSVFileProcessor:
             {"sepal_length": 4.4, "sepal_width": 2.9, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
             {"sepal_length": 4.9, "sepal_width": 3.1, "petal_length": 1.5, "petal_width": 0.1, "species": "setosa"}
         ]
-        assert var_preview == []
+        assert var_preview is None
         original_var_names = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
         assert var_names == ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
         assert all(var in var_names for var in original_var_names)

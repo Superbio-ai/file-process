@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 from io import BytesIO
 
 import pandas as pd
@@ -14,7 +14,8 @@ class FileProcessorBase(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], List[dict], List[dict]):
+    def process(self, file, model_csv_file: BytesIO = None, **kwargs) \
+            -> (List[str], Optional[pd.DataFrame], Optional[pd.DataFrame]):
         raise NotImplemented
 
 
@@ -33,7 +34,7 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
         if not result:
             raise ModelFileValidationError
 
-    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], List[dict], List[dict]):
+    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], pd.DataFrame, pd.DataFrame):
         adata = self.read_file(file, **kwargs)
         if model_csv_file:
             self.model_file_validation(adata, model_csv_file)
