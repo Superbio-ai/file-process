@@ -3,6 +3,7 @@ from io import BytesIO
 import pytest
 from werkzeug.datastructures import FileStorage
 
+from common import create_tabular_response
 from data_validation_preview.exceptions import ModelFileValidationError
 from data_validation_preview.h5 import H5FileProcessor
 from tests.test_data_validation_preview import INPUT_FILES_PATH
@@ -33,6 +34,8 @@ class TestH5FileProcessor:
     def test_process(self):
         file, file_obj = self._get_file_and_remote_file_obj(self.path)
         target_names, var_preview, obs_preview = H5FileProcessor().process(file_obj)
+        var_preview = create_tabular_response(var_preview)
+        obs_preview = create_tabular_response(obs_preview)
         assert target_names == ['NRP', 'age_group', 'cell_source', 'cell_type', 'donor', 'gender', 'n_counts',
                                 'n_genes', 'percent_mito', 'percent_ribo', 'region', 'sample',  'scrublet_score',
                                 'source', 'type', 'version', 'cell_states', 'Used', '_scvi_batch', '_scvi_labels']

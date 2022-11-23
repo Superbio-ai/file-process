@@ -33,8 +33,8 @@ class CSVFileProcessor(FileProcessorBase):
         return var_names, obs_preview
 
     def model_file_validation(self, df: pd.DataFrame, model_csv_file: BytesIO, need_target: bool = True):
-        # reader = json.load(BytesIO(model_csv_file))
-        reader = json.load(model_csv_file)
+        reader = json.load(BytesIO(model_csv_file))
+        # reader = json.load(model_csv_file)
         var_names = set(reader['columns'])
         target_names = set(reader['targets'])
         metadata = reader.get('metadata', {})
@@ -53,10 +53,9 @@ class CSVFileProcessor(FileProcessorBase):
         if not are_variables_valid:
             raise ModelFileValidationVariablesError
 
-    def process(self, file, model_csv_file: BytesIO = None, **kwargs) \
-            -> (None, List[str], dict):
+    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], [], List[dict]):
         df = self.read_file(file, **kwargs)
         if model_csv_file:
             self.model_file_validation(df, model_csv_file)
         var_names, obs_preview = self.get_preview_data(df)
-        return None, var_names, obs_preview
+        return var_names, [], obs_preview
