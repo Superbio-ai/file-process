@@ -4,8 +4,9 @@ from io import BytesIO
 
 import pandas as pd
 from anndata import AnnData
+from numpy import nan
 
-from data_validation_preview.exceptions import ModelFileValidationError
+from file_process.exceptions import ModelFileValidationError
 
 
 class FileProcessorBase(ABC):
@@ -16,6 +17,10 @@ class FileProcessorBase(ABC):
     @abstractmethod
     def process(self, file, model_csv_file: BytesIO = None, **kwargs) \
             -> (List[str], Optional[pd.DataFrame], Optional[pd.DataFrame]):
+        raise NotImplemented
+
+    @abstractmethod
+    def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
         raise NotImplemented
 
 
@@ -40,3 +45,10 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
             self.model_file_validation(adata, model_csv_file)
         target_names, var_preview, obs_preview = self.get_preview_data(adata)
         return target_names, var_preview, obs_preview
+
+    def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
+        rows = data_df.round(2).replace({nan: None}).to_dict(orient='records')
+        indices = list(data_df.index)
+        for index, value in enumerate(indices):
+            rows[index]['Feature Name'] = value
+        return rows

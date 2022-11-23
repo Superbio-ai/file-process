@@ -3,8 +3,8 @@ from werkzeug.datastructures import FileStorage
 import pandas as pd
 
 from common import create_tabular_csv_response
-from data_validation_preview.csv import CSVFileProcessor
-from data_validation_preview.exceptions import ModelFileValidationError
+from file_process.csv import CSVFileProcessor
+from file_process.exceptions import ModelFileValidationError
 from tests.test_data_validation_preview import INPUT_FILES_PATH
 
 

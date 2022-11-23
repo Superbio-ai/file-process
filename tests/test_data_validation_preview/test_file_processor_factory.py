@@ -1,9 +1,9 @@
 import pytest
 
-from data_validation_preview.csv import CSVFileProcessor
-from data_validation_preview.exceptions import WrongExtension
-from data_validation_preview.file_processor_factory import FileProcessFactory
-from data_validation_preview.h5 import H5FileProcessor
+from file_process.csv import CSVFileProcessor
+from file_process.exceptions import WrongExtension
+from file_process.file_processor_factory import FileProcessFactory
+from file_process.h5 import H5FileProcessor
 
 
 class TestFileProcessFactory:

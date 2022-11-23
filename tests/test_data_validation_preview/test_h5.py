@@ -4,8 +4,8 @@ import pytest
 from werkzeug.datastructures import FileStorage
 
 from common import create_tabular_response
-from data_validation_preview.exceptions import ModelFileValidationError
-from data_validation_preview.h5 import H5FileProcessor
+from file_process.exceptions import ModelFileValidationError
+from file_process.h5 import H5FileProcessor
 from tests.test_data_validation_preview import INPUT_FILES_PATH
 
 

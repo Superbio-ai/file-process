@@ -24,4 +24,4 @@ jobs:
           pip install pylint
       - name: Analysing the code with pylint
         run: |
-          pylint --fail-under=10 data_validation_preview
+          pylint --fail-under=10 file_process

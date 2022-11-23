@@ -1,6 +1,6 @@
 import anndata
 
-from data_validation_preview.base import TabularFileProcessorBase
+from file_process.base import TabularFileProcessorBase
 
 
 class H5FileProcessor(TabularFileProcessorBase):

@@ -3,10 +3,11 @@ from typing import List
 from io import BytesIO
 
 import pandas as pd
+from numpy import number, nan
 from werkzeug.datastructures import FileStorage
 
-from data_validation_preview.base import FileProcessorBase
-from data_validation_preview.exceptions import ModelFileValidationTargetsError, ModelFileValidationVariablesError
+from file_process.base import FileProcessorBase
+from file_process.exceptions import ModelFileValidationTargetsError, ModelFileValidationVariablesError
 
 
 class CSVFileProcessor(FileProcessorBase):
@@ -59,3 +60,10 @@ class CSVFileProcessor(FileProcessorBase):
             self.model_file_validation(df, model_csv_file)
         var_names, obs_preview = self.get_preview_data(df)
         return var_names, None, obs_preview
+
+    def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
+        numeric_columns = data_df.select_dtypes(include=number).columns
+        rows = data_df.replace({nan: None})
+        rows[numeric_columns] = rows[numeric_columns].round(2)
+        rows = rows.to_dict(orient='records')
+        return rows

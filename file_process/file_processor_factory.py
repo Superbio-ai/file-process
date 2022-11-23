@@ -1,6 +1,6 @@
-from data_validation_preview.csv import CSVFileProcessor
-from data_validation_preview.exceptions import WrongExtension
-from data_validation_preview.h5 import H5FileProcessor
+from file_process.csv import CSVFileProcessor
+from file_process.exceptions import WrongExtension
+from file_process.h5 import H5FileProcessor
 
 
 class FileProcessFactory:  # pylint: disable=too-few-public-methods
