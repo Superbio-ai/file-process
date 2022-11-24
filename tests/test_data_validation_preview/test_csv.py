@@ -2,7 +2,6 @@ import pytest
 from werkzeug.datastructures import FileStorage
 import pandas as pd
 
-from common import create_tabular_csv_response
 from file_process.csv import CSVFileProcessor
 from file_process.exceptions import ModelFileValidationError
 from tests.test_data_validation_preview import INPUT_FILES_PATH
@@ -33,8 +32,9 @@ class TestCSVFileProcessor:
 
     def test_process(self):
         file, file_obj = self._get_file_and_remote_file_obj(self.original_data_path)
-        var_names, var_preview, obs_preview = CSVFileProcessor().process(file_obj)
-        obs_preview = create_tabular_csv_response(obs_preview)
+        file_processor = CSVFileProcessor()
+        var_names, var_preview, obs_preview = file_processor.process(file_obj)
+        obs_preview = file_processor.create_tabular_response(obs_preview)
         assert obs_preview == [
             {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
             {"sepal_length": 4.9, "sepal_width": 3.0, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
@@ -48,9 +48,7 @@ class TestCSVFileProcessor:
             {"sepal_length": 4.9, "sepal_width": 3.1, "petal_length": 1.5, "petal_width": 0.1, "species": "setosa"}
         ]
         assert var_preview is None
-        original_var_names = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
         assert var_names == ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
-        assert all(var in var_names for var in original_var_names)
         file.close()
 
     valid_tuples = [

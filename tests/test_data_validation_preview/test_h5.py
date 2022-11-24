@@ -3,7 +3,6 @@ from io import BytesIO
 import pytest
 from werkzeug.datastructures import FileStorage
 
-from common import create_tabular_response
 from file_process.exceptions import ModelFileValidationError
 from file_process.h5 import H5FileProcessor
 from tests.test_data_validation_preview import INPUT_FILES_PATH
@@ -33,13 +32,14 @@ class TestH5FileProcessor:
 
     def test_process(self):
         file, file_obj = self._get_file_and_remote_file_obj(self.path)
-        target_names, var_preview, obs_preview = H5FileProcessor().process(file_obj)
-        var_preview = create_tabular_response(var_preview)
-        obs_preview = create_tabular_response(obs_preview)
+        file_processor = H5FileProcessor()
+        target_names, var_preview, obs_preview = file_processor.process(file_obj)
+        var_preview_json = file_processor.create_tabular_response(var_preview)
+        obs_preview_json = file_processor.create_tabular_response(obs_preview)
         assert target_names == ['NRP', 'age_group', 'cell_source', 'cell_type', 'donor', 'gender', 'n_counts',
                                 'n_genes', 'percent_mito', 'percent_ribo', 'region', 'sample',  'scrublet_score',
                                 'source', 'type', 'version', 'cell_states', 'Used', '_scvi_batch', '_scvi_labels']
-        assert obs_preview == [
+        assert obs_preview_json == [
             {'Feature Name': 'AACTCCCCACGAGAGT-1-HCAHeart7844001', 'NRP': 'Yes', 'age_group': '65-70', 'cell_source': 'Sanger-CD45', 'cell_type': 'Myeloid', 'donor': 'D6', 'gender': 'Male', 'n_counts': 1420.0, 'n_genes': 738, 'percent_mito': 0.05000000074505806, 'percent_ribo': 0.05999999865889549, 'region': 'LA', 'sample': 'HCAHeart7844001', 'scrublet_score': 0.11, 'source': 'CD45+', 'type': 'DCD', 'version': 'V2', 'cell_states': 'LYVE1+MØ1', 'Used': 'Yes', '_scvi_batch': 0, '_scvi_labels': 0},
             {'Feature Name': 'ATAACGCAGAGCTGGT-1-HCAHeart7829979', 'NRP': 'No', 'age_group': '70-75', 'cell_source': 'Sanger-Nuclei', 'cell_type': 'Ventricular_Cardiomyocyte', 'donor': 'D4', 'gender': 'Female', 'n_counts': 844.0, 'n_genes': 505, 'percent_mito': 0.0, 'percent_ribo': 0.0, 'region': 'RV', 'sample': 'HCAHeart7829979', 'scrublet_score': 0.09, 'source': 'Nuclei', 'type': 'DCD', 'version': 'V2', 'cell_states': 'vCM1', 'Used': 'Yes', '_scvi_batch': 0, '_scvi_labels': 0},
             {'Feature Name': 'GTCAAGTCATGCCACG-1-HCAHeart7702879', 'NRP': 'Yes', 'age_group': '60-65', 'cell_source': 'Sanger-Nuclei', 'cell_type': 'Fibroblast', 'donor': 'D2', 'gender': 'Male', 'n_counts': 1491.0, 'n_genes': 862, 'percent_mito': 0.0, 'percent_ribo': 0.009999999776482582, 'region': 'RA', 'sample': 'HCAHeart7702879', 'scrublet_score': 0.2, 'source': 'Nuclei', 'type': 'DCD', 'version': 'V2', 'cell_states': 'FB2', 'Used': 'Yes', '_scvi_batch': 0, '_scvi_labels': 0},
@@ -51,7 +51,7 @@ class TestH5FileProcessor:
             {'Feature Name': 'GAGTCATTCTCCGTGT-1-HCAHeart8287128', 'NRP': 'Yes', 'age_group': '60-65', 'cell_source': 'Sanger-Nuclei', 'cell_type': 'Fibroblast', 'donor': 'D11', 'gender': 'Female', 'n_counts': 1785.0, 'n_genes': 1098, 'percent_mito': 0.0, 'percent_ribo': 0.0, 'region': 'AX', 'sample': 'HCAHeart8287128', 'scrublet_score': 0.24, 'source': 'Nuclei', 'type': 'DCD', 'version': 'V3', 'cell_states': 'FB3', 'Used': 'Yes', '_scvi_batch': 0, '_scvi_labels': 0},
             {'Feature Name': 'TGGGAAGAGTCGAGTG-1-HCAHeart7829978', 'NRP': 'No', 'age_group': '70-75', 'cell_source': 'Sanger-Nuclei', 'cell_type': 'Ventricular_Cardiomyocyte', 'donor': 'D4', 'gender': 'Female', 'n_counts': 4269.0, 'n_genes': 1955, 'percent_mito': 0.0, 'percent_ribo': 0.0, 'region': 'LV', 'sample': 'HCAHeart7829978', 'scrublet_score': 0.16, 'source': 'Nuclei', 'type': 'DCD', 'version': 'V2', 'cell_states': 'vCM1', 'Used': 'Yes', '_scvi_batch': 0, '_scvi_labels': 0}
         ]
-        assert var_preview == [
+        assert var_preview_json == [
             {'Feature Name': 'AL627309.1', 'gene_ids-Harvard-Nuclei': 'ENSG00000238009', 'feature_types-Harvard-Nuclei': 'Gene Expression', 'gene_ids-Sanger-Nuclei': 'ENSG00000238009', 'feature_types-Sanger-Nuclei': 0, 'gene_ids-Sanger-Cells': 'ENSG00000238009', 'feature_types-Sanger-Cells': 0, 'gene_ids-Sanger-CD45': 'ENSG00000238009', 'feature_types-Sanger-CD45': 0, 'n_counts': 249.0},
             {'Feature Name': 'AC114498.1', 'gene_ids-Harvard-Nuclei': 'ENSG00000235146', 'feature_types-Harvard-Nuclei': 'Gene Expression', 'gene_ids-Sanger-Nuclei': 'ENSG00000235146', 'feature_types-Sanger-Nuclei': 0, 'gene_ids-Sanger-Cells': 'ENSG00000235146', 'feature_types-Sanger-Cells': 0, 'gene_ids-Sanger-CD45': 'ENSG00000235146', 'feature_types-Sanger-CD45': 0, 'n_counts': 28.0},
             {'Feature Name': 'AL669831.2', 'gene_ids-Harvard-Nuclei': 'ENSG00000229905', 'feature_types-Harvard-Nuclei': 'Gene Expression', 'gene_ids-Sanger-Nuclei': 'ENSG00000229905', 'feature_types-Sanger-Nuclei': 0, 'gene_ids-Sanger-Cells': 'ENSG00000229905', 'feature_types-Sanger-Cells': 0, 'gene_ids-Sanger-CD45': 'ENSG00000229905', 'feature_types-Sanger-CD45': 0, 'n_counts': 3.0},
