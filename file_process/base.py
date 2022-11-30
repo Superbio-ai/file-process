@@ -15,7 +15,7 @@ class FileProcessorBase(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def process(self, file, model_csv_file: BytesIO = None, **kwargs) \
+    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) \
             -> (List[str], Optional[pd.DataFrame], Optional[pd.DataFrame]):
         raise NotImplemented
 

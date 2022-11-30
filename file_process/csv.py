@@ -35,7 +35,6 @@ class CSVFileProcessor(FileProcessorBase):
 
     def model_file_validation(self, df: pd.DataFrame, model_metadata_file: BytesIO, need_target: bool = True):
         reader = json.load(BytesIO(model_metadata_file))
-        # reader = json.load(model_csv_file)
         var_names = set(reader['columns'])
         target_names = set(reader['targets'])
         metadata = reader.get('metadata', {})
