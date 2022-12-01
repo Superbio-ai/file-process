@@ -15,7 +15,7 @@ class FileProcessorBase(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def process(self, file, model_csv_file: BytesIO = None, **kwargs) \
+    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) \
             -> (List[str], Optional[pd.DataFrame], Optional[pd.DataFrame]):
         raise NotImplemented
 
@@ -31,18 +31,18 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
         obs_preview = adata.obs.head(n=10)
         return target_names, var_preview, obs_preview
 
-    def model_file_validation(self, adata: AnnData, model_csv_file: BytesIO):
-        reader = pd.read_csv(model_csv_file, sep=',', index_col=0)
+    def model_file_validation(self, adata: AnnData, model_metadata_file: BytesIO):
+        reader = pd.read_csv(model_metadata_file, sep=',', index_col=0)
         var_names = reader.index
         dataset_vars = list(adata.var.index)
         result = all(elem in dataset_vars for elem in var_names)
         if not result:
             raise ModelFileValidationError
 
-    def process(self, file, model_csv_file: BytesIO = None, **kwargs) -> (List[str], pd.DataFrame, pd.DataFrame):
+    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) -> (List[str], pd.DataFrame, pd.DataFrame):
         adata = self.read_file(file, **kwargs)
-        if model_csv_file:
-            self.model_file_validation(adata, model_csv_file)
+        if model_metadata_file:
+            self.model_file_validation(adata, model_metadata_file)
         target_names, var_preview, obs_preview = self.get_preview_data(adata)
         return target_names, var_preview, obs_preview
 
