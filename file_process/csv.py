@@ -28,13 +28,13 @@ class CSVFileProcessor(FileProcessorBase):
         df = pd.read_csv(data_stream, sep=delimiter)
         return df
 
-    def get_preview_data(self, df: pd.DataFrame):
+    def get_preview_data(self, df: pd.DataFrame) -> (List[str], None, pd.DataFrame):
         var_names = list(df.columns)
         obs_preview = df.head(min(10, df.shape[0]))
-        return var_names, obs_preview
+        return var_names, None, obs_preview
 
     def model_file_validation(self, df: pd.DataFrame, model_metadata_file: BytesIO, need_target: bool = True):
-        reader = json.load(BytesIO(model_metadata_file))
+        reader = json.load(model_metadata_file)
         var_names = set(reader['columns'])
         target_names = set(reader['targets'])
         metadata = reader.get('metadata', {})
@@ -52,13 +52,6 @@ class CSVFileProcessor(FileProcessorBase):
                                   for elem in var_names.difference(target_names))
         if not are_variables_valid:
             raise ModelFileValidationVariablesError
-
-    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) -> (List[str], None, pd.DataFrame):
-        df = self.read_file(file, **kwargs)
-        if model_metadata_file:
-            self.model_file_validation(df, model_metadata_file)
-        var_names, obs_preview = self.get_preview_data(df)
-        return var_names, None, obs_preview
 
     def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
         numeric_columns = data_df.select_dtypes(include=number).columns

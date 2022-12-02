@@ -15,9 +15,19 @@ class FileProcessorBase(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) \
-            -> (List[str], Optional[pd.DataFrame], Optional[pd.DataFrame]):
+    def model_file_validation(self, df, model_metadata_file):
         raise NotImplemented
+
+    @abstractmethod
+    def get_preview_data(self, df):
+        raise NotImplemented
+
+    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) -> (List[str], pd.DataFrame, pd.DataFrame):
+        df = self.read_file(file, **kwargs)
+        if model_metadata_file:
+            self.model_file_validation(df, model_metadata_file)
+        target_names, var_preview, obs_preview = self.get_preview_data(df)
+        return target_names, var_preview, obs_preview
 
     @abstractmethod
     def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
@@ -38,13 +48,6 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
         result = all(elem in dataset_vars for elem in var_names)
         if not result:
             raise ModelFileValidationError
-
-    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) -> (List[str], pd.DataFrame, pd.DataFrame):
-        adata = self.read_file(file, **kwargs)
-        if model_metadata_file:
-            self.model_file_validation(adata, model_metadata_file)
-        target_names, var_preview, obs_preview = self.get_preview_data(adata)
-        return target_names, var_preview, obs_preview
 
     def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
         rows = data_df.round(2).replace({nan: None}).to_dict(orient='records')
