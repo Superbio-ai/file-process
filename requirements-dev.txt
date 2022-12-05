@@ -1,2 +1,5 @@
+# This file is only used for running Github actions. Requirements that are installed with a project are listed in
+# setup.py install_requires.
+
 pytest==5.4.1
 pytest-mock==3.6.1

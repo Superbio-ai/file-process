@@ -14,7 +14,7 @@ class CSVFileProcessor(FileProcessorBase):
     def read_file(self, file, **kwargs):
         if isinstance(file, FileStorage):  # TODO try to get rid of it
             file = file.read()
-        file = BytesIO(file)
+            file = BytesIO(file)
         read_rows_count = kwargs.get('read_rows_count', 10)
         delimiter = kwargs.get('delimiter', None)
         data = self.read_csv_with_delimiter(file, read_rows_count, delimiter)
@@ -34,7 +34,7 @@ class CSVFileProcessor(FileProcessorBase):
         return var_names, obs_preview
 
     def model_file_validation(self, df: pd.DataFrame, model_metadata_file: BytesIO, need_target: bool = True):
-        reader = json.load(BytesIO(model_metadata_file))
+        reader = json.load(model_metadata_file)
         var_names = set(reader['columns'])
         target_names = set(reader['targets'])
         metadata = reader.get('metadata', {})

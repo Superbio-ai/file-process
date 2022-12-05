@@ -1,0 +1,24 @@
+name: Deploy new version to pypi
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'setup.py'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install package used for deployment
+        run: |
+          pip install twine
+      - name: Build and push package to pypi
+        run: |
+          python setup.py sdist
+          twine upload dist/* -u Katya_superbio -p pr/9vVn8Xpya$-?
