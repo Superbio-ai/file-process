@@ -1,3 +1,5 @@
+from io import BytesIO
+
 import pytest
 from werkzeug.datastructures import FileStorage
 import pandas as pd
@@ -14,9 +16,9 @@ class TestCSVFileProcessor:
     MOCK_DATA_PATH = f'{MAIN_PATH}/mock_data'
 
     def _get_file_and_remote_file_obj(self, path: str):
-        with open(path, 'rb') as file:
-            file_obj = file.read()
-            return file, file_obj
+        file = open(path, 'rb')
+        file_obj = BytesIO(file.read())
+        return file, file_obj
 
     def test_read_local_file(self):
         with open(self.original_data_path, 'rb') as file:
