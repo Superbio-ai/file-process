@@ -28,5 +28,5 @@ class DelimiterError(BaseError):
     message = 'Parsing error: try changing delimiter.'
 
 
-class NoColumnsException(BaseError):
+class NoColumnsError(BaseError):
     message = 'No columns in file.'
