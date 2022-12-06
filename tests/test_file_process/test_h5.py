@@ -86,5 +86,5 @@ class TestH5FileProcessor:
         test_file, test_file_obj = self._get_file_and_remote_file_obj(f'{INPUT_FILES_PATH}/pbmc3k_raw.h5ad')
         adata = H5FileProcessor().read_file(test_file_obj)
         with pytest.raises(NoColumnsError):
-            H5FileProcessor().model_file_validation(adata)
+            H5FileProcessor().validate(adata)
         test_file.close()
