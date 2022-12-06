@@ -46,9 +46,9 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
 
     def process(self, file, model_metadata_file: BytesIO = None, **kwargs) -> (List[str], pd.DataFrame, pd.DataFrame):
         adata = self.read_file(file, **kwargs)
+        self.validate(adata)
         if model_metadata_file:
             self.model_file_validation(adata, model_metadata_file)
-        self.validate(adata)
         target_names, var_preview, obs_preview = self.get_preview_data(adata)
         return target_names, var_preview, obs_preview
 
