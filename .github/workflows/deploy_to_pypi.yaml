@@ -19,6 +19,9 @@ jobs:
         run: |
           pip install twine
       - name: Build and push package to pypi
+        env:
+          PYPI_USER: ${{ secrets.PYPI_USER }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
           python setup.py sdist
-          twine upload dist/* -u Katya_superbio -p 5RPVpFtjhE@QUsu
+          twine upload dist/* -u "$PYPI_USER" -p "$PYPI_PASSWORD"
