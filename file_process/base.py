@@ -6,7 +6,7 @@ import pandas as pd
 from anndata import AnnData
 from numpy import nan
 
-from file_process.exceptions import ModelFileValidationError
+from file_process.exceptions import ModelFileValidationError, NoColumnsException
 
 
 class FileProcessorBase(ABC):
@@ -39,10 +39,16 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
         if not result:
             raise ModelFileValidationError
 
+    def validate(self, adata: AnnData):
+        target_names = list(adata.obs.columns)
+        if not target_names:
+            raise NoColumnsException
+
     def process(self, file, model_metadata_file: BytesIO = None, **kwargs) -> (List[str], pd.DataFrame, pd.DataFrame):
         adata = self.read_file(file, **kwargs)
         if model_metadata_file:
             self.model_file_validation(adata, model_metadata_file)
+        self.validate(adata)
         target_names, var_preview, obs_preview = self.get_preview_data(adata)
         return target_names, var_preview, obs_preview
 

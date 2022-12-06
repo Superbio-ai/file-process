@@ -4,10 +4,11 @@ from io import BytesIO
 
 import pandas as pd
 from numpy import number, nan
+from pandas.errors import ParserError
 from werkzeug.datastructures import FileStorage
 
 from file_process.base import FileProcessorBase
-from file_process.exceptions import ModelFileValidationTargetsError, ModelFileValidationVariablesError
+from file_process.exceptions import ModelFileValidationTargetsError, ModelFileValidationVariablesError, DelimiterError
 
 
 class CSVFileProcessor(FileProcessorBase):
@@ -25,7 +26,10 @@ class CSVFileProcessor(FileProcessorBase):
             reader = pd.read_csv(data_stream, sep=None, iterator=True, nrows=read_rows_count)
             delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
             data_stream.seek(0)
-        df = pd.read_csv(data_stream, sep=delimiter)
+        try:
+            df = pd.read_csv(data_stream, sep=delimiter)
+        except ParserError:
+            raise DelimiterError()
         return df
 
     def get_preview_data(self, df: pd.DataFrame):
