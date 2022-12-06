@@ -1,5 +1,5 @@
 import json
-from typing import List, Optional
+from typing import List
 from io import BytesIO
 
 import pandas as pd
@@ -60,9 +60,9 @@ class CSVFileProcessor(FileProcessorBase):
         var_names, obs_preview = self.get_preview_data(df)
         return var_names, None, obs_preview
 
-    def create_tabular_response(self, data_df: pd.DataFrame) -> Optional[List[dict]]:
+    def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
         if data_df is None:
-            return None
+            return []
         numeric_columns = data_df.select_dtypes(include=number).columns
         rows = data_df.replace({nan: None})
         rows[numeric_columns] = rows[numeric_columns].round(2)
