@@ -5,7 +5,7 @@ from werkzeug.datastructures import FileStorage
 
 from file_process.exceptions import ModelFileValidationError
 from file_process.h5 import H5FileProcessor
-from tests.test_data_validation_preview import INPUT_FILES_PATH
+from tests.test_file_process import INPUT_FILES_PATH
 
 
 class TestH5FileProcessor:
