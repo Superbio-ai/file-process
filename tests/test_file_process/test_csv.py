@@ -6,7 +6,7 @@ import pandas as pd
 
 from file_process.csv import CSVFileProcessor
 from file_process.exceptions import ModelFileValidationError
-from tests.test_data_validation_preview import INPUT_FILES_PATH
+from tests.test_file_process import INPUT_FILES_PATH
 
 
 class TestCSVFileProcessor:
