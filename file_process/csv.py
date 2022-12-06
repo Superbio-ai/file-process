@@ -28,8 +28,8 @@ class CSVFileProcessor(FileProcessorBase):
             data_stream.seek(0)
         try:
             df = pd.read_csv(data_stream, sep=delimiter)
-        except ParserError:
-            raise DelimiterError()
+        except ParserError as exc:
+            raise DelimiterError() from exc
         return df
 
     def get_preview_data(self, df: pd.DataFrame):
