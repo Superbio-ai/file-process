@@ -5,7 +5,7 @@ from werkzeug.datastructures import FileStorage
 import pandas as pd
 
 from file_process.csv import CSVFileProcessor
-from file_process.exceptions import ModelFileValidationError
+from file_process.exceptions import ModelFileValidationError, DelimiterError
 from tests.test_file_process import INPUT_FILES_PATH
 
 
@@ -102,4 +102,10 @@ class TestCSVFileProcessor:
         with pytest.raises(ModelFileValidationError):
             is_valid = CSVFileProcessor().model_file_validation(df, metadata_file_obj)
         metadata_file.close()
+        test_file.close()
+
+    def test_read_file_wrong_delimiter(self):
+        test_file, test_file_obj = self._get_file_and_remote_file_obj(f'{self.MAIN_PATH}/csv_example.csv')
+        with pytest.raises(DelimiterError):
+            _ = CSVFileProcessor().read_file(test_file_obj, delimiter='.')
         test_file.close()

@@ -3,7 +3,7 @@ from io import BytesIO
 import pytest
 from werkzeug.datastructures import FileStorage
 
-from file_process.exceptions import ModelFileValidationError
+from file_process.exceptions import ModelFileValidationError, NoColumnsError
 from file_process.h5 import H5FileProcessor
 from tests.test_file_process import INPUT_FILES_PATH
 
@@ -80,4 +80,11 @@ class TestH5FileProcessor:
         with pytest.raises(ModelFileValidationError):
             is_valid = H5FileProcessor().model_file_validation(adata, model_file_obj)
         model_file.close()
+        test_file.close()
+
+    def test_validate_no_columns(self):
+        test_file, test_file_obj = self._get_file_and_remote_file_obj(f'{INPUT_FILES_PATH}/pbmc3k_raw.h5ad')
+        adata = H5FileProcessor().read_file(test_file_obj)
+        with pytest.raises(NoColumnsError):
+            H5FileProcessor().validate(adata)
         test_file.close()

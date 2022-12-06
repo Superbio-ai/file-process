@@ -22,3 +22,11 @@ class ModelFileValidationVariablesError(BaseError):
 
 class WrongExtension(BaseError):
     message = 'Cannot process file: wrong extension.'
+
+
+class DelimiterError(BaseError):
+    message = 'Parsing error: try changing delimiter.'
+
+
+class NoColumnsError(BaseError):
+    message = 'No columns in file.'

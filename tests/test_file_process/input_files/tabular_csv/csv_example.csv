@@ -1,0 +1,18 @@
+﻿Property,name,link,Subject,Method,Technology,Library,Data Input,Resource,Other
+,,,,,,,,,
+1,Full Spectrum Bioinformatics,https://github.com/zaneveld/full_spectrum_bioinformatics,General,,,,,"Notebook, Repository",
+2,Multi-Omics Integration with Qlattice,https://www.kaggle.com/code/samdemharter/multi-omics-integration-with-the-qlattice/notebook,"Cell, Property Prediction",,QLattice,,"Molecular, Tabular","Pretrained Model, Repository","Dataset Included, Paper Included"
+3,Microsoft Genomics Data Analysis,https://github.com/microsoft/genomicsnotebook,General,Data Analysis,,T-SQL,Tabular,"Notebook, Pretrained Model","Azure, Dataset Included"
+4,Visual Pattern Explorer for Epigenomic Data,https://github.com/Novartis/peax,Epigenomics,"Classification, Unsupervised Learning",Encoder-Decoder,Sklearn,Tabular,Pretrained Model,"Dataset Included, Docker File"
+5,Virtual Staining using cGAN,https://github.com/softmatterlab/VirtualStaining,Cell,Multi-Label Classification,"CNN, GAN, U-Net","Keras, Tensorflow",Image,Repository,"Docker File, Docker Needed"
+6,Semantic Segmentation of Microscopy Data,https://atomai.readthedocs.io/en/latest/examples.html,Cell,Image Segmentation,U-Net,AtomAI,"Atomic, Image",Notebook,Dataset Included
+7,Predicting 1D Spectra from 2D Images with Encoder-Decoder NN,https://atomai.readthedocs.io/en/latest/examples.html,Property Prediction,Image Segmentation,"CNN, Encoder-Decoder",AtomAI,Image,Notebook,Dataset Included
+8,Deep Learning and Graph Analysis of Atomically Resolved Images,https://atomai.readthedocs.io/en/latest/examples.html,Cell,Image Segmentation,Graph Learning,AtomAI,"Atomic, Image","Notebook, Pretrained Model",Dataset Included
+9,Exploring Order Parameter in Disordered Systems via VAE,https://atomai.readthedocs.io/en/latest/examples.html,Cell,"Classification, Image Segmentation",VAE,AtomAI,"Atomic, Image",Notebook,Dataset Included
+10,Deep Kernel Learning of Functionality from Structural Data,https://atomai.readthedocs.io/en/latest/examples.html,Property Prediction,Image Segmentation,"DKL, GP","AtomAI, PyTorch","Atomic, Image",Notebook,Dataset Included
+11,Autoencoders for Image Cleaning,https://atomai.readthedocs.io/en/latest/examples.html,Cell,,Encoder-Decoder,"AtomAI, PyTorch","Atomic, Image",Notebook,Dataset Included
+12,Clustering and Topological Data Analysis of Single-Cell RNA Sequencing Data,https://github.com/TomMakesThings/Clustering-and-TDA-of-scRNA-seq-Data#code,Cell,"Data Analysis, Structure Prediction",K-Means,PyTorch,"Molecular, Tabular","Notebook, Repository",Dataset Included
+13,DeepChain Protein Transformers,https://github.com/DeepChainBio/bio-transformers,"Gene Expression, Property Prediction",,Transformer,"PyTorch, Sklearn",Molecular,"Pretrained Model, Repository","Dataset Included, Docker File, Paper Included"
+14,Protein Sequence Evaluation,https://github.com/DeepChainBio/deepchain-apps,Protein,"Classification, Structure Prediction",Transformer,"Keras, PyTorch, Tensorflow",Molecular,"Repository, Tool Kit",Dataset Included
+15,"Transformer Protein Language Models ",https://github.com/facebookresearch/esm/,Protein,"Structure Prediction, Unsupervised Learning","Inverse Folding Model, Transformer",PyTorch,Molecular,"Model Zoo, Notebook, Pretrained Model, Repository",Dataset Included
+16,Predicting Protein Sequences from Protein Backbone Atom Coordinates,https://colab.research.google.com/github/facebookresearch/esm/blob/master/examples/inverse_folding/notebook.ipynb,"Property Prediction, Protein","Base-pair Predictions, Structure Prediction","Inverse Folding Model, Transformer",PyTorch,"Atomic, Tabular","Notebook, Pretrained Model",Dataset Included
