@@ -37,6 +37,7 @@ class TestCSVFileProcessor:
         file_processor = CSVFileProcessor()
         var_names, var_preview, obs_preview = file_processor.process(file_obj)
         obs_preview = file_processor.create_tabular_response(obs_preview)
+        var_preview = file_processor.create_tabular_response(var_preview)
         assert obs_preview == [
             {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
             {"sepal_length": 4.9, "sepal_width": 3.0, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},

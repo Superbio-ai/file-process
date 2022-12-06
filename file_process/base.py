@@ -47,7 +47,7 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
         return target_names, var_preview, obs_preview
 
     def create_tabular_response(self, data_df: pd.DataFrame) -> Optional[List[dict]]:
-        if not data_df:
+        if data_df is None:
             return None
         rows = data_df.round(2).replace({nan: None}).to_dict(orient='records')
         indices = list(data_df.index)

@@ -61,7 +61,7 @@ class CSVFileProcessor(FileProcessorBase):
         return var_names, None, obs_preview
 
     def create_tabular_response(self, data_df: pd.DataFrame) -> Optional[List[dict]]:
-        if not data_df:
+        if data_df is None:
             return None
         numeric_columns = data_df.select_dtypes(include=number).columns
         rows = data_df.replace({nan: None})
