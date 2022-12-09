@@ -4,11 +4,11 @@ import pytest
 from werkzeug.datastructures import FileStorage
 
 from file_process.exceptions import ModelFileValidationError, NoColumnsError
-from file_process.h5 import H5FileProcessor
+from file_process.h5 import H5ADFileProcessor
 from tests.test_file_process import INPUT_FILES_PATH
 
 
-class TestH5FileProcessor:
+class TestH5ADFileProcessor:
     path = f'{INPUT_FILES_PATH}/heart_sample.h5ad'
     valid_model_path = f'{INPUT_FILES_PATH}/heart_sample_model.csv'
     invalid_model_path = f'{INPUT_FILES_PATH}/heart_sample_invalid.csv'
@@ -21,18 +21,18 @@ class TestH5FileProcessor:
     def test_read_local_file(self):
         with open(self.path, 'rb') as file:
             file_obj = FileStorage(file)
-            res = H5FileProcessor().read_file(file_obj)
+            res = H5ADFileProcessor().read_file(file_obj)
             assert res
 
     def test_read_remote_file(self):
         file, file_obj = self._get_file_and_remote_file_obj(self.path)
-        res = H5FileProcessor().read_file(file_obj)
+        res = H5ADFileProcessor().read_file(file_obj)
         assert res
         file.close()
 
     def test_process(self):
         file, file_obj = self._get_file_and_remote_file_obj(self.path)
-        file_processor = H5FileProcessor()
+        file_processor = H5ADFileProcessor()
         target_names, var_preview, obs_preview = file_processor.process(file_obj)
         var_preview_json = file_processor.create_tabular_response(var_preview)
         obs_preview_json = file_processor.create_tabular_response(obs_preview)
@@ -68,23 +68,23 @@ class TestH5FileProcessor:
     def test_model_file_validation_with_h5(self):
         model_file, model_file_obj = self._get_file_and_remote_file_obj(self.valid_model_path)
         test_file, test_file_obj = self._get_file_and_remote_file_obj(self.path)
-        adata = H5FileProcessor().read_file(test_file_obj)
-        is_valid = H5FileProcessor().model_file_validation(adata, model_file_obj)
+        adata = H5ADFileProcessor().read_file(test_file_obj)
+        is_valid = H5ADFileProcessor().model_file_validation(adata, model_file_obj)
         model_file.close()
         test_file.close()
 
     def test_model_file_validation_with_h5_invalid_model(self):
         model_file, model_file_obj = self._get_file_and_remote_file_obj(self.invalid_model_path)
         test_file, test_file_obj = self._get_file_and_remote_file_obj(self.path)
-        adata = H5FileProcessor().read_file(test_file_obj)
+        adata = H5ADFileProcessor().read_file(test_file_obj)
         with pytest.raises(ModelFileValidationError):
-            is_valid = H5FileProcessor().model_file_validation(adata, model_file_obj)
+            is_valid = H5ADFileProcessor().model_file_validation(adata, model_file_obj)
         model_file.close()
         test_file.close()
 
     def test_validate_no_columns(self):
         test_file, test_file_obj = self._get_file_and_remote_file_obj(f'{INPUT_FILES_PATH}/pbmc3k_raw.h5ad')
-        adata = H5FileProcessor().read_file(test_file_obj)
+        adata = H5ADFileProcessor().read_file(test_file_obj)
         with pytest.raises(NoColumnsError):
-            H5FileProcessor().validate(adata)
+            H5ADFileProcessor().validate(adata)
         test_file.close()
