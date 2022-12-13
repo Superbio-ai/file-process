@@ -4,14 +4,13 @@ import pandas as pd
 
 from file_process.csv import CSVFileProcessor
 from file_process.exceptions import ModelFileValidationError, DelimiterError
-from tests.test_file_process import H5AD_INPUT_FILES_PATH, get_remote_file_obj
+from tests.test_file_process import get_remote_file_obj, CSV_INPUT_FILES_PATH
 
 
 class TestCSVFileProcessor:
-    MAIN_PATH = f'{H5AD_INPUT_FILES_PATH}/tabular_csv'
-    original_data_path = f'{MAIN_PATH}/original_data.csv'
-    MOCK_CONFIGS_PATH = f'{MAIN_PATH}/mock_configs'
-    MOCK_DATA_PATH = f'{MAIN_PATH}/mock_data'
+    original_data_path = f'{CSV_INPUT_FILES_PATH}/original_data.csv'
+    MOCK_CONFIGS_PATH = f'{CSV_INPUT_FILES_PATH}/mock_configs'
+    MOCK_DATA_PATH = f'{CSV_INPUT_FILES_PATH}/mock_data'
 
     def test_read_local_file(self):
         with open(self.original_data_path, 'rb') as file:
@@ -88,6 +87,6 @@ class TestCSVFileProcessor:
             CSVFileProcessor(test_file_obj).model_file_validation(metadata_file_obj)
 
     def test_read_file_wrong_delimiter(self):
-        test_file_obj = get_remote_file_obj(f'{self.MAIN_PATH}/csv_example.csv')
+        test_file_obj = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/csv_example.csv')
         with pytest.raises(DelimiterError):
             _ = CSVFileProcessor(test_file_obj, delimiter='.')
