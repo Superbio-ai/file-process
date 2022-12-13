@@ -12,12 +12,6 @@ class TestCSVFileProcessor:
     MOCK_CONFIGS_PATH = f'{CSV_INPUT_FILES_PATH}/mock_configs'
     MOCK_DATA_PATH = f'{CSV_INPUT_FILES_PATH}/mock_data'
 
-    def test_read_local_file(self):
-        with open(self.original_data_path, 'rb') as file:
-            file_obj = FileStorage(file)
-            res = CSVFileProcessor(file_obj)
-            assert isinstance(res.data, pd.DataFrame)
-
     def test_read_remote_file(self):
         file_obj = get_remote_file_obj(self.original_data_path)
         res = CSVFileProcessor(file_obj)

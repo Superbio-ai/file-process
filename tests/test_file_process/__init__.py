@@ -1,6 +1,7 @@
 from io import BytesIO
 
-H5AD_INPUT_FILES_PATH = 'tests/test_file_process/input_files'
+
+H5AD_INPUT_FILES_PATH = 'tests/test_file_process/input_files/h5ad'
 CSV_INPUT_FILES_PATH = 'tests/test_file_process/input_files/tabular_csv'
 
 
