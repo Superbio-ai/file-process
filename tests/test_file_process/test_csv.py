@@ -1,12 +1,10 @@
-from io import BytesIO
-
 import pytest
 from werkzeug.datastructures import FileStorage
 import pandas as pd
 
 from file_process.csv import CSVFileProcessor
 from file_process.exceptions import ModelFileValidationError, DelimiterError
-from tests.test_file_process import INPUT_FILES_PATH
+from tests.test_file_process import INPUT_FILES_PATH, get_remote_file_obj
 
 
 class TestCSVFileProcessor:
@@ -15,11 +13,6 @@ class TestCSVFileProcessor:
     MOCK_CONFIGS_PATH = f'{MAIN_PATH}/mock_configs'
     MOCK_DATA_PATH = f'{MAIN_PATH}/mock_data'
 
-    def _get_file_and_remote_file_obj(self, path: str):
-        with open(path, 'rb') as file:
-            file_obj = BytesIO(file.read())
-            return file_obj
-
     def test_read_local_file(self):
         with open(self.original_data_path, 'rb') as file:
             file_obj = FileStorage(file)
@@ -27,12 +20,12 @@ class TestCSVFileProcessor:
             assert isinstance(res.data, pd.DataFrame)
 
     def test_read_remote_file(self):
-        file_obj = self._get_file_and_remote_file_obj(self.original_data_path)
+        file_obj = get_remote_file_obj(self.original_data_path)
         res = CSVFileProcessor(file_obj)
         assert isinstance(res.data, pd.DataFrame)
 
     def test_process(self):
-        file_obj = self._get_file_and_remote_file_obj(self.original_data_path)
+        file_obj = get_remote_file_obj(self.original_data_path)
         file_processor = CSVFileProcessor(file_obj)
         var_names, var_preview, obs_preview = file_processor.get_preview()
         assert obs_preview == [
@@ -65,8 +58,8 @@ class TestCSVFileProcessor:
     def tst_model_file_validation_with_csv(self, config_csv, data_csv):
         new_data_path = f'{self.MOCK_DATA_PATH}/{data_csv}'
         data_metadata_path = f'{self.MOCK_CONFIGS_PATH}/{config_csv}'
-        metadata_file_obj = self._get_file_and_remote_file_obj(data_metadata_path)
-        test_file_obj = self._get_file_and_remote_file_obj(new_data_path)
+        metadata_file_obj = get_remote_file_obj(data_metadata_path)
+        test_file_obj = get_remote_file_obj(new_data_path)
         CSVFileProcessor(test_file_obj).model_file_validation(metadata_file_obj)
 
     invalid_tuples = [
@@ -89,12 +82,12 @@ class TestCSVFileProcessor:
     def tst_model_file_validation_with_csv_error(self, config_csv, data_csv):
         new_data_path = f'{self.MOCK_DATA_PATH}/{data_csv}'
         data_metadata_path = f'{self.MOCK_CONFIGS_PATH}/{config_csv}'
-        metadata_file, metadata_file_obj = self._get_file_and_remote_file_obj(data_metadata_path)
-        test_file_obj = self._get_file_and_remote_file_obj(new_data_path)
+        metadata_file, metadata_file_obj = get_remote_file_obj(data_metadata_path)
+        test_file_obj = get_remote_file_obj(new_data_path)
         with pytest.raises(ModelFileValidationError):
             CSVFileProcessor(test_file_obj).model_file_validation(metadata_file_obj)
 
     def test_read_file_wrong_delimiter(self):
-        test_file_obj = self._get_file_and_remote_file_obj(f'{self.MAIN_PATH}/csv_example.csv')
+        test_file_obj = get_remote_file_obj(f'{self.MAIN_PATH}/csv_example.csv')
         with pytest.raises(DelimiterError):
             _ = CSVFileProcessor(test_file_obj, delimiter='.')
