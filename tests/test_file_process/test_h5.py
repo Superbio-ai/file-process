@@ -5,13 +5,13 @@ from werkzeug.datastructures import FileStorage
 
 from file_process.exceptions import ModelFileValidationError, NoColumnsError
 from file_process.h5 import H5ADFileProcessor
-from tests.test_file_process import INPUT_FILES_PATH
+from tests.test_file_process import H5AD_INPUT_FILES_PATH
 
 
 class TestH5ADFileProcessor:
-    path = f'{INPUT_FILES_PATH}/heart_sample.h5ad'
-    valid_model_path = f'{INPUT_FILES_PATH}/heart_sample_model.csv'
-    invalid_model_path = f'{INPUT_FILES_PATH}/heart_sample_invalid.csv'
+    path = f'{H5AD_INPUT_FILES_PATH}/heart_sample.h5ad'
+    valid_model_path = f'{H5AD_INPUT_FILES_PATH}/heart_sample_model.csv'
+    invalid_model_path = f'{H5AD_INPUT_FILES_PATH}/heart_sample_invalid.csv'
     
     def _get_file_and_remote_file_obj(self, path: str):
         file = open(path, 'rb')
@@ -83,7 +83,7 @@ class TestH5ADFileProcessor:
         test_file.close()
 
     def test_validate_no_columns(self):
-        test_file, test_file_obj = self._get_file_and_remote_file_obj(f'{INPUT_FILES_PATH}/pbmc3k_raw.h5ad')
+        test_file, test_file_obj = self._get_file_and_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/pbmc3k_raw.h5ad')
         adata = H5ADFileProcessor().read_file(test_file_obj)
         with pytest.raises(NoColumnsError):
             H5ADFileProcessor().validate(adata)

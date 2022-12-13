@@ -1,6 +1,7 @@
 from io import BytesIO
 
-INPUT_FILES_PATH = 'tests/test_file_process/input_files'
+H5AD_INPUT_FILES_PATH = 'tests/test_file_process/input_files'
+CSV_INPUT_FILES_PATH = 'tests/test_file_process/input_files/tabular_csv'
 
 
 def get_remote_file_obj(path: str):
