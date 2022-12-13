@@ -38,7 +38,7 @@ class H5ADFileProcessor(FileProcessorBase):
         except Exception as exc:
             var_preview = None
 
-        return target_names, var_preview, obs_preview
+        return target_names, obs_preview, var_preview
 
     def model_file_validation(self, model_metadata_file: BytesIO):
         reader = pd.read_csv(model_metadata_file, sep=',', index_col=0)

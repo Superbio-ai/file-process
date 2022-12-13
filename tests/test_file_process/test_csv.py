@@ -17,10 +17,10 @@ class TestCSVFileProcessor:
         res = CSVFileProcessor(file_obj)
         assert isinstance(res.data, pd.DataFrame)
 
-    def test_process(self):
+    def test_get_preview(self):
         file_obj = get_remote_file_obj(self.original_data_path)
         file_processor = CSVFileProcessor(file_obj)
-        var_names, var_preview, obs_preview = file_processor.get_preview()
+        var_names, obs_preview, var_preview = file_processor.get_preview()
         assert obs_preview == [
             {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
             {"sepal_length": 4.9, "sepal_width": 3.0, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
