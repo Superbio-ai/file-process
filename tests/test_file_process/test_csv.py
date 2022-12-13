@@ -23,21 +23,19 @@ class TestCSVFileProcessor:
     def test_read_local_file(self):
         with open(self.original_data_path, 'rb') as file:
             file_obj = FileStorage(file)
-            res = CSVFileProcessor().read_file(file_obj)
-            assert isinstance(res, pd.DataFrame)
+            res = CSVFileProcessor(file_obj)
+            assert isinstance(res.data, pd.DataFrame)
 
     def test_read_remote_file(self):
         file, file_obj = self._get_file_and_remote_file_obj(self.original_data_path)
-        res = CSVFileProcessor().read_file(file_obj)
-        assert isinstance(res, pd.DataFrame)
+        res = CSVFileProcessor(file_obj)
+        assert isinstance(res.data, pd.DataFrame)
         file.close()
 
     def test_process(self):
         file, file_obj = self._get_file_and_remote_file_obj(self.original_data_path)
-        file_processor = CSVFileProcessor()
-        var_names, var_preview, obs_preview = file_processor.process(file_obj)
-        obs_preview = file_processor.create_tabular_response(obs_preview)
-        var_preview = file_processor.create_tabular_response(var_preview)
+        file_processor = CSVFileProcessor(file_obj)
+        var_names, var_preview, obs_preview = file_processor.get_preview()
         assert obs_preview == [
             {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
             {"sepal_length": 4.9, "sepal_width": 3.0, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
@@ -71,8 +69,7 @@ class TestCSVFileProcessor:
         data_metadata_path = f'{self.MOCK_CONFIGS_PATH}/{config_csv}'
         metadata_file, metadata_file_obj = self._get_file_and_remote_file_obj(data_metadata_path)
         test_file, test_file_obj = self._get_file_and_remote_file_obj(new_data_path)
-        df = CSVFileProcessor().read_file(test_file_obj)
-        is_valid = CSVFileProcessor().model_file_validation(df, metadata_file_obj)
+        is_valid = CSVFileProcessor(test_file_obj).model_file_validation(metadata_file_obj)
         metadata_file.close()
         test_file.close()
 
@@ -98,14 +95,13 @@ class TestCSVFileProcessor:
         data_metadata_path = f'{self.MOCK_CONFIGS_PATH}/{config_csv}'
         metadata_file, metadata_file_obj = self._get_file_and_remote_file_obj(data_metadata_path)
         test_file, test_file_obj = self._get_file_and_remote_file_obj(new_data_path)
-        df = CSVFileProcessor().read_file(test_file_obj)
         with pytest.raises(ModelFileValidationError):
-            is_valid = CSVFileProcessor().model_file_validation(df, metadata_file_obj)
+            is_valid = CSVFileProcessor(test_file_obj).model_file_validation(metadata_file_obj)
         metadata_file.close()
         test_file.close()
 
     def test_read_file_wrong_delimiter(self):
         test_file, test_file_obj = self._get_file_and_remote_file_obj(f'{self.MAIN_PATH}/csv_example.csv')
         with pytest.raises(DelimiterError):
-            _ = CSVFileProcessor().read_file(test_file_obj, delimiter='.')
+            _ = CSVFileProcessor(test_file_obj, delimiter='.')
         test_file.close()
