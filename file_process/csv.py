@@ -4,6 +4,7 @@ from io import BytesIO
 
 import pandas as pd
 from numpy import number, nan
+from pandas import notnull
 from pandas.errors import ParserError
 from werkzeug.datastructures import FileStorage
 
@@ -68,7 +69,7 @@ class CSVFileProcessor(FileProcessorBase):
         if data_df is None:
             return []
         numeric_columns = data_df.select_dtypes(include=number).columns
-        rows = data_df.replace({nan: None})
+        rows = data_df.where(notnull(data_df), None)
         rows[numeric_columns] = rows[numeric_columns].round(2)
         rows = rows.to_dict(orient='records')
         return rows

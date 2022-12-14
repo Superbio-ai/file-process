@@ -1,6 +1,7 @@
 from io import BytesIO
 
 import pytest
+from numpy import nan
 from werkzeug.datastructures import FileStorage
 
 from file_process.exceptions import ModelFileValidationError, NoColumnsError
@@ -64,6 +65,15 @@ class TestH5ADFileProcessor:
             {'Feature Name': 'SAMD11', 'gene_ids-Harvard-Nuclei': 'ENSG00000187634', 'feature_types-Harvard-Nuclei': 'Gene Expression', 'gene_ids-Sanger-Nuclei': 'ENSG00000187634', 'feature_types-Sanger-Nuclei': 0, 'gene_ids-Sanger-Cells': 'ENSG00000187634', 'feature_types-Sanger-Cells': 0, 'gene_ids-Sanger-CD45': 'ENSG00000187634', 'feature_types-Sanger-CD45': 0, 'n_counts': 171.0}
         ]
         file.close()
+
+    def test_process_file_with_nans(self):
+        file, file_obj = self._get_file_and_remote_file_obj(f'{INPUT_FILES_PATH}/follicular_sample.h5ad')
+        file_processor = H5ADFileProcessor()
+        _, _, obs_preview = file_processor.process(file_obj)
+        obs_preview_json = file_processor.create_tabular_response(obs_preview)
+        for item in obs_preview_json:
+            for value in item.values():
+                assert value is not nan
 
     def test_model_file_validation_with_h5(self):
         model_file, model_file_obj = self._get_file_and_remote_file_obj(self.valid_model_path)
