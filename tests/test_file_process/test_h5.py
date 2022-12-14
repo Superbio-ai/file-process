@@ -74,6 +74,7 @@ class TestH5ADFileProcessor:
         for item in obs_preview_json:
             for value in item.values():
                 assert value is not nan
+        file.close()
 
     def test_model_file_validation_with_h5(self):
         model_file, model_file_obj = self._get_file_and_remote_file_obj(self.valid_model_path)
