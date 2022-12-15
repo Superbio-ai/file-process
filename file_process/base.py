@@ -58,6 +58,8 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
         data_df = data_df.astype(object)
         rows = data_df.round(2).where(notnull(data_df), None).to_dict(orient='records')
         indices = list(data_df.index)
+        if len(rows) != len(indices):
+            return rows
         for index, value in enumerate(indices):
             rows[index]['Feature Name'] = value
         return rows
