@@ -76,6 +76,16 @@ class TestH5ADFileProcessor:
                 assert value is not nan
         file.close()
 
+    def test_process_file_no_rows(self):
+        file, file_obj = self._get_file_and_remote_file_obj(f'{INPUT_FILES_PATH}/liver_sample.h5ad')
+        file_processor = H5ADFileProcessor()
+        target_names, var_preview, obs_preview = file_processor.process(file_obj)
+        var_preview_json = file_processor.create_tabular_response(var_preview)
+        obs_preview_json = file_processor.create_tabular_response(obs_preview)
+        assert obs_preview_json != []
+        assert var_preview_json == []
+        file.close()
+
     def test_model_file_validation_with_h5(self):
         model_file, model_file_obj = self._get_file_and_remote_file_obj(self.valid_model_path)
         test_file, test_file_obj = self._get_file_and_remote_file_obj(self.path)
