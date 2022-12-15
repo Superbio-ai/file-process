@@ -4,7 +4,7 @@ from io import BytesIO
 
 import pandas as pd
 from anndata import AnnData
-from numpy import nan
+from pandas import notnull
 
 from file_process.exceptions import ModelFileValidationError, NoColumnsError
 
@@ -55,7 +55,8 @@ class TabularFileProcessorBase(FileProcessorBase, ABC):
     def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
         if data_df is None:
             return []
-        rows = data_df.round(2).replace({nan: None}).to_dict(orient='records')
+        data_df = data_df.astype(object)
+        rows = data_df.round(2).where(notnull(data_df), None).to_dict(orient='records')
         indices = list(data_df.index)
         for index, value in enumerate(indices):
             rows[index]['Feature Name'] = value

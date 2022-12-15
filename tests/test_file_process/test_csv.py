@@ -1,6 +1,7 @@
 from io import BytesIO
 
 import pytest
+from numpy import nan
 from werkzeug.datastructures import FileStorage
 import pandas as pd
 
@@ -52,6 +53,16 @@ class TestCSVFileProcessor:
         ]
         assert var_preview == []
         assert var_names == ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
+        file.close()
+
+    def test_process_csv_with_nans(self):
+        file, file_obj = self._get_file_and_remote_file_obj(f'{self.MAIN_PATH}/follicular_obs_sample.csv')
+        file_processor = CSVFileProcessor()
+        var_names, var_preview, obs_preview = file_processor.process(file_obj)
+        obs_preview_json = file_processor.create_tabular_response(obs_preview)
+        for item in obs_preview_json:
+            for value in item.values():
+                assert value is not nan
         file.close()
 
     valid_tuples = [
