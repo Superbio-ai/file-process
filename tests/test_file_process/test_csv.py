@@ -118,5 +118,5 @@ class TestCSVFileProcessor:
     def test_read_file_wrong_delimiter(self):
         test_file, test_file_obj = self._get_file_and_remote_file_obj(f'{self.MAIN_PATH}/csv_example.csv')
         with pytest.raises(DelimiterError):
-            _ = CSVFileProcessor().read_file(test_file_obj, delimiter='.')
+            _ = CSVFileProcessor().read_csv_with_delimiter(test_file_obj, read_rows_count=10, delimiter='.')
         test_file.close()
