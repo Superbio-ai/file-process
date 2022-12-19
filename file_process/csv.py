@@ -46,7 +46,7 @@ class CSVFileProcessor(FileProcessorBase):
 
         if need_target:
             all_targets = metadata.get('require_all_targets', True)
-            if all_targets is True or all_targets == 'all':
+            if all_targets == 'all':
                 are_targets_valid = not target_names or all(elem in dataset_vars for elem in target_names)
             elif all_targets == 'some':
                 are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
