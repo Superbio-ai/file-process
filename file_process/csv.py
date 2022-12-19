@@ -17,7 +17,7 @@ class CSVFileProcessor(FileProcessorBase):
             file = file.read()
             file = BytesIO(file)
         read_rows_count = kwargs.get('read_rows_count', 10)
-        delimiter = kwargs.get('delimiter', None)
+        delimiter = kwargs.get('delimiter', ',')
         data = self.read_csv_with_delimiter(file, read_rows_count, delimiter)
         return data
 
