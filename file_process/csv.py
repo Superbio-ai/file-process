@@ -23,11 +23,11 @@ class CSVFileProcessor(FileProcessorBase):
 
     def read_csv_with_delimiter(self, data_stream, read_rows_count: int, delimiter: str = None):
         if not delimiter:
-            reader = pd.read_csv(data_stream, sep=None, iterator=True, nrows=read_rows_count, index=False)
+            reader = pd.read_csv(data_stream, sep=None, iterator=True, nrows=read_rows_count)
             delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
             data_stream.seek(0)
         try:
-            df = pd.read_csv(data_stream, sep=delimiter, index=False)
+            df = pd.read_csv(data_stream, sep=delimiter)
         except ParserError as exc:
             raise DelimiterError() from exc
         return df
