@@ -46,10 +46,12 @@ class CSVFileProcessor(FileProcessorBase):
 
         if need_target:
             all_targets = metadata.get('require_all_targets', True)
-            if all_targets:
+            if all_targets == 'all':
                 are_targets_valid = not target_names or all(elem in dataset_vars for elem in target_names)
-            else:
+            elif all_targets == 'some':
                 are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
+            else:
+                are_targets_valid = True
             if not are_targets_valid:
                 raise ModelFileValidationTargetsError
         are_variables_valid = all(elem in dataset_vars.difference(target_names)
