@@ -23,11 +23,11 @@ class CSVFileProcessor(FileProcessorBase):
 
     def read_csv_with_delimiter(self, data_stream, read_rows_count: int, delimiter: str = None):
         if not delimiter:
-            reader = pd.read_csv(data_stream, sep=None, iterator=True, nrows=read_rows_count)
+            reader = pd.read_csv(data_stream, sep=None, iterator=True, nrows=read_rows_count, index=False)
             delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
             data_stream.seek(0)
         try:
-            df = pd.read_csv(data_stream, sep=delimiter)
+            df = pd.read_csv(data_stream, sep=delimiter, index=False)
         except ParserError as exc:
             raise DelimiterError() from exc
         return df
@@ -46,10 +46,12 @@ class CSVFileProcessor(FileProcessorBase):
 
         if need_target:
             all_targets = metadata.get('require_all_targets', True)
-            if all_targets:
+            if all_targets is True or all_targets == 'all':
                 are_targets_valid = not target_names or all(elem in dataset_vars for elem in target_names)
-            else:
+            elif all_targets == 'some':
                 are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
+            else:
+                are_targets_valid = True
             if not are_targets_valid:
                 raise ModelFileValidationTargetsError
         are_variables_valid = all(elem in dataset_vars.difference(target_names)
