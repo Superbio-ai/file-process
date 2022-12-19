@@ -17,11 +17,10 @@ class CSVFileProcessor(FileProcessorBase):
             file = file.read()
             file = BytesIO(file)
         read_rows_count = kwargs.get('read_rows_count', 10)
-        delimiter = kwargs.get('delimiter', ',')
-        data = self.read_csv_with_delimiter(file, read_rows_count, delimiter)
+        data = self.read_csv_with_delimiter(file, read_rows_count, delimiter=',')
         return data
 
-    def read_csv_with_delimiter(self, data_stream, read_rows_count: int, delimiter: str = None):
+    def read_csv_with_delimiter(self, data_stream, read_rows_count: int, delimiter: str = ','):
         if not delimiter:
             reader = pd.read_csv(data_stream, sep=None, iterator=True, nrows=read_rows_count)
             delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
