@@ -13,7 +13,7 @@ from file_process.exceptions import ModelFileValidationError, NoColumnsError
 
 class H5ADFileProcessor(FileProcessorBase):
 
-    def __init__(self, file, **kwargs):
+    def __init__(self, file, **_):
         self.adata = anndata.read_h5ad(file)
 
     def get_targets(self):
