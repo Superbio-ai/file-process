@@ -36,6 +36,9 @@ class CSVFileProcessor(FileProcessorBase):
         obs_preview = self.get_obs()
         return var_names, self.create_tabular_response(obs_preview), None
 
+    def validate(self):
+        pass
+
     def model_file_validation(self, model_metadata_file: BytesIO):
         reader = json.load(model_metadata_file)
         var_names = set(reader['columns'])

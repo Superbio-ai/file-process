@@ -1,7 +1,11 @@
+from io import BytesIO
+from typing import List
+
 import anndata
+import pandas as pd
+
 from file_process.base import FileProcessorBase
 
-from anndata import AnnData
 from pandas import notnull
 
 from file_process.exceptions import ModelFileValidationError, NoColumnsError
@@ -9,37 +13,39 @@ from file_process.exceptions import ModelFileValidationError, NoColumnsError
 
 class H5ADFileProcessor(FileProcessorBase):
 
-    def read_file(self, file, **kwargs):
-        return anndata.read_h5ad(file)
+    def __init__(self, file, **kwargs):
+        self.adata = anndata.read_h5ad(file)
 
-    def get_preview_data(self, adata):
-        target_names = list(adata.obs.columns)
-        var_preview = adata.var.head(n=10)
-        obs_preview = adata.obs.head(n=10)
-        return target_names, var_preview, obs_preview
+    def get_targets(self):
+        return list(self.adata.obs.columns)
 
-    def model_file_validation(self, adata: AnnData, model_metadata_file: BytesIO):
+    def get_obs(self):
+        return self.adata.obs.head(n=10)
+
+    def get_var(self):
+        return self.adata.var.head(n=10)
+
+    def get_preview(self):
+        target_names = self.get_targets()
+        obs_preview = self.get_obs()
+        var_preview = self.get_var()
+        return target_names, self.create_tabular_response(obs_preview), self.create_tabular_response(var_preview)
+
+    def model_file_validation(self, model_metadata_file: BytesIO):
         reader = pd.read_csv(model_metadata_file, sep=',', index_col=0)
         var_names = reader.index
-        dataset_vars = list(adata.var.index)
+        dataset_vars = list(self.adata.var.index)
         result = all(elem in dataset_vars for elem in var_names)
         if not result:
             raise ModelFileValidationError
 
-    def validate(self, adata: AnnData):
-        target_names = list(adata.obs.columns)
+    def validate(self):
+        target_names = list(self.adata.obs.columns)
         if not target_names:
             raise NoColumnsError
 
-    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) -> (List[str], pd.DataFrame, pd.DataFrame):
-        adata = self.read_file(file, **kwargs)
-        self.validate(adata)
-        if model_metadata_file:
-            self.model_file_validation(adata, model_metadata_file)
-        target_names, var_preview, obs_preview = self.get_preview_data(adata)
-        return target_names, var_preview, obs_preview
-
-    def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
+    @staticmethod
+    def create_tabular_response(data_df: pd.DataFrame) -> List[dict]:
         if data_df is None:
             return []
         data_df = data_df.astype(object)
