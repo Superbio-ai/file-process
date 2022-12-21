@@ -5,9 +5,6 @@ import anndata
 import pandas as pd
 
 from file_process.base import FileProcessorBase
-
-from pandas import notnull
-
 from file_process.exceptions import ModelFileValidationError, NoColumnsError
 
 
@@ -49,7 +46,7 @@ class H5ADFileProcessor(FileProcessorBase):
         if data_df is None:
             return []
         data_df = data_df.astype(object)
-        rows = data_df.round(2).where(notnull(data_df), None).to_dict(orient='records')
+        rows = data_df.round(2).where(pd.notnull(data_df), None).to_dict(orient='records')
         indices = list(data_df.index)
         if len(rows) != len(indices):
             return rows
