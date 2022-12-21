@@ -20,13 +20,7 @@ class TestCSVFileProcessor:
         file_obj = BytesIO(file.read())
         return file, file_obj
 
-    def test_read_local_file(self):
-        with open(self.original_data_path, 'rb') as file:
-            file_obj = FileStorage(file)
-            res = CSVFileProcessor(file_obj)
-            assert isinstance(res.data_df, pd.DataFrame)
-
-    def test_read_remote_file(self):
+    def test_read_file(self):
         file_bytes_io = get_remote_file_obj(self.original_data_path)
         res = CSVFileProcessor(file_bytes_io)
         assert isinstance(res.data_df, pd.DataFrame)
@@ -50,7 +44,7 @@ class TestCSVFileProcessor:
         assert var_preview == None
         assert var_names == ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
 
-    def test_process_csv_with_nans(self):
+    def test_get_preview_file_with_nans(self):
         file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/follicular_obs_sample.csv')
         var_names, obs_preview, var_preview = CSVFileProcessor(file_bytes_io).get_preview()
         for item in obs_preview:
