@@ -12,8 +12,12 @@ class ModelFileValidationError(BaseError):
     message = 'Validation check failed: new data does not contain all fields required by model.'
 
 
-class ModelFileValidationTargetsError(BaseError):
+class NotAllTargetsError(BaseError):
     message = 'Validation check failed: new data does not contain all targets required by model.'
+
+
+class NotSomeTargetsError(BaseError):
+    message = 'Validation check failed: new data does not contain any targets required by model.'
 
 
 class ModelFileValidationVariablesError(BaseError):

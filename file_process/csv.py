@@ -7,7 +7,8 @@ from numpy import number, nan
 from pandas.errors import ParserError
 
 from file_process.base import FileProcessorBase
-from file_process.exceptions import ModelFileValidationTargetsError, ModelFileValidationVariablesError, DelimiterError
+from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError, DelimiterError, \
+    NotSomeTargetsError
 
 
 class CSVFileProcessor(FileProcessorBase):
@@ -50,11 +51,11 @@ class CSVFileProcessor(FileProcessorBase):
         if all_targets == 'all':
             are_targets_valid = not target_names or all(elem in dataset_vars for elem in target_names)
             if not are_targets_valid:
-                raise ModelFileValidationTargetsError
+                raise NotAllTargetsError
         elif all_targets == 'some':
             are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
             if not are_targets_valid:
-                raise ModelFileValidationTargetsError
+                raise NotSomeTargetsError
 
         are_variables_valid = all(elem in dataset_vars.difference(target_names)
                                   for elem in var_names.difference(target_names))
