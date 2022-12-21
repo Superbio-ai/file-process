@@ -6,5 +6,5 @@ setup(name="file_process",
       license='MIT',
       author="superbio.ai",
       url='https://github.com/Superbio-ai/file-process',
-      install_requires=['pandas==1.2.5', 'anndata==0.8.0', 'Werkzeug==2.0.3', 'scanpy==1.9.1', 'numpy==1.21'],
+      install_requires=['pandas==1.2.5', 'anndata==0.8.0', 'scanpy==1.9.1', 'numpy==1.21'],
       packages=['file_process'])
