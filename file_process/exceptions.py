@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import Set
 
 
 class BaseError(ABC, Exception):
-    @property
-    @abstractmethod
-    def message(self):
-        pass
+    pass
 
 
 class ModelFileValidationError(BaseError):
@@ -13,15 +11,21 @@ class ModelFileValidationError(BaseError):
 
 
 class NotAllTargetsError(BaseError):
-    message = 'Validation check failed: new data does not contain all targets required by model.'
+    def __init__(self, targets_missing: Set[str]):
+        self.message = f'Validation check failed: new data does not contain all targets required by model. ' \
+                       f'Missing targets: {targets_missing}'
 
 
 class NotSomeTargetsError(BaseError):
-    message = 'Validation check failed: new data does not contain any targets required by model.'
+    def __init__(self, model_targets: Set[str]):
+        self.message = f'Validation check failed: new data does not contain any targets required by model. ' \
+                       f'List of targets in a model: {model_targets}'
 
 
 class ModelFileValidationVariablesError(BaseError):
-    message = 'Validation check failed: new data does not contain all variables (columns) required by model.'
+    def __init__(self, variables_missing: Set[str]):
+        self.message = f'Validation check failed: new data does not contain any variables (columns) required by model.' \
+                       f'Missing variables: {variables_missing}'
 
 
 class WrongExtension(BaseError):

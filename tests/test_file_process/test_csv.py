@@ -5,7 +5,8 @@ from numpy import nan
 import pandas as pd
 
 from file_process.csv import CSVFileProcessor
-from file_process.exceptions import ModelFileValidationError, DelimiterError
+from file_process.exceptions import ModelFileValidationError, DelimiterError, NotAllTargetsError, \
+    ModelFileValidationVariablesError
 from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
 
@@ -61,34 +62,34 @@ class TestCSVFileProcessor:
         ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_4.json')
     ]
 
-    @pytest.mark.parametrize('config_csv, data_csv', valid_tuples)
-    def tst_model_file_validation_with_csv(self, config_csv, data_csv):
+    @pytest.mark.parametrize('data_csv, config_csv', valid_tuples)
+    def test_model_file_validation_with_csv(self, data_csv, config_csv):
         file_bytes_io = get_remote_file_obj(f'{self.MOCK_DATA_PATH}/{data_csv}')
         metadata_file_bytes_io = get_remote_file_obj(f'{self.MOCK_CONFIGS_PATH}/{config_csv}')
         _ = CSVFileProcessor(file_bytes_io).model_file_validation(metadata_file_bytes_io)
 
     invalid_tuples = [
-        ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_1.json'),
-        ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_2.json'),
-        ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_3.json'),
-        ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_5.json'),
-        ('sometimes_valid_new_data.csv', 'valid_usupervised_data_config_1.json'),
-        ('sometimes_valid_new_data.csv', 'valid_usupervised_data_config_2.json'),
-        ('invalid_new_data.csv', 'valid_train_supervised_data_config_1.json'),
-        ('invalid_new_data.csv', 'valid_train_supervised_data_config_2.json'),
-        ('invalid_new_data.csv', 'valid_train_supervised_data_config_3.json'),
-        ('invalid_new_data.csv', 'valid_train_supervised_data_config_4.json'),
-        ('invalid_new_data.csv', 'valid_train_supervised_data_config_5.json'),
-        ('invalid_new_data.csv', 'valid_usupervised_data_config_1.json'),
-        ('invalid_new_data.csv', 'valid_usupervised_data_config_2.json'),
+        ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_1.json', NotAllTargetsError),
+        ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_2.json', NotAllTargetsError),
+        ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_3.json', NotAllTargetsError),
+        ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_5.json', NotAllTargetsError),
+        ('sometimes_valid_new_data.csv', 'valid_usupervised_data_config_1.json', ModelFileValidationVariablesError),
+        ('sometimes_valid_new_data.csv', 'valid_usupervised_data_config_2.json', ModelFileValidationVariablesError),
+        ('invalid_new_data.csv', 'valid_train_supervised_data_config_1.json', ModelFileValidationVariablesError),
+        ('invalid_new_data.csv', 'valid_train_supervised_data_config_2.json', ModelFileValidationVariablesError),
+        ('invalid_new_data.csv', 'valid_train_supervised_data_config_3.json', ModelFileValidationVariablesError),
+        ('invalid_new_data.csv', 'valid_train_supervised_data_config_4.json', ModelFileValidationVariablesError),
+        ('invalid_new_data.csv', 'valid_train_supervised_data_config_5.json', ModelFileValidationVariablesError),
+        ('invalid_new_data.csv', 'valid_usupervised_data_config_1.json', ModelFileValidationVariablesError),
+        ('invalid_new_data.csv', 'valid_usupervised_data_config_2.json', ModelFileValidationVariablesError),
     ]
 
-    @pytest.mark.parametrize('config_csv, data_csv', invalid_tuples)
-    def tst_model_file_validation_with_csv_error(self, config_csv, data_csv):
+    @pytest.mark.parametrize('data_csv, config_csv, exception', invalid_tuples)
+    def test_model_file_validation_with_csv_error(self, data_csv, config_csv, exception):
         file_bytes_io = get_remote_file_obj(f'{self.MOCK_DATA_PATH}/{data_csv}')
         metadata_file_bytes_io = get_remote_file_obj(f'{self.MOCK_CONFIGS_PATH}/{config_csv}')
-        with pytest.raises(ModelFileValidationError):
-            _ = CSVFileProcessor(file_bytes_io).model_file_validation(metadata_file_bytes_io)
+        with pytest.raises(exception):
+            CSVFileProcessor(file_bytes_io).model_file_validation(metadata_file_bytes_io)
 
     def test_read_file_wrong_delimiter(self):
         file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/csv_example.csv')

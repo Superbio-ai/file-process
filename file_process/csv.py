@@ -26,7 +26,7 @@ class CSVFileProcessor(FileProcessorBase):
         file.seek(0)
         return delimiter
 
-    def get_obs(self):
+    def get_observations(self):
         return self.data_df.head(min(10, self.data_df.shape[0]))
 
     def get_var_names(self):
@@ -34,7 +34,7 @@ class CSVFileProcessor(FileProcessorBase):
 
     def get_preview(self):
         var_names = self.get_var_names()
-        obs_preview = self.get_obs()
+        obs_preview = self.get_observations()
         return var_names, self.create_tabular_response(obs_preview), None
 
     def validate(self):
@@ -47,20 +47,21 @@ class CSVFileProcessor(FileProcessorBase):
         metadata = reader.get('metadata', {})
         dataset_vars = set(self.data_df.columns)
 
-        all_targets = metadata.get('require_all_targets', True)
+        all_targets = metadata.get('require_all_targets', 'all')
         if all_targets == 'all':
-            are_targets_valid = not target_names or all(elem in dataset_vars for elem in target_names)
-            if not are_targets_valid:
-                raise NotAllTargetsError
+            difference = target_names - dataset_vars
+            if difference:
+                raise NotAllTargetsError(difference)
         elif all_targets == 'some':
             are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
             if not are_targets_valid:
-                raise NotSomeTargetsError
+                raise NotSomeTargetsError(target_names)
 
-        are_variables_valid = all(elem in dataset_vars.difference(target_names)
-                                  for elem in var_names.difference(target_names))
-        if not are_variables_valid:
-            raise ModelFileValidationVariablesError
+        dataset_diff = dataset_vars.difference(target_names)
+        var_names_diff = var_names.difference(target_names)
+        difference = var_names_diff - dataset_diff
+        if difference:
+            raise ModelFileValidationVariablesError(difference)
 
     @staticmethod
     def create_tabular_response(data_df: pd.DataFrame) -> List[dict]:
