@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Set
 
 
@@ -24,8 +24,8 @@ class NotSomeTargetsError(BaseError):
 
 class ModelFileValidationVariablesError(BaseError):
     def __init__(self, variables_missing: Set[str]):
-        self.message = f'Validation check failed: new data does not contain any variables (columns) required by model.' \
-                       f'Missing variables: {variables_missing}'
+        self.message = f'Validation check failed: new data does not contain any variables (columns) required by ' \
+                       f'model. Missing variables: {variables_missing}'
 
 
 class WrongExtension(BaseError):
