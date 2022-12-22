@@ -21,12 +21,12 @@ class TestCSVFileProcessor:
 
     def test_read_file(self):
         file_bytes_io = get_remote_file_obj(self.original_data_path)
-        res = CSVFileProcessor(file_bytes_io, delimiter=',')
+        res = CSVFileProcessor(file_bytes_io)
         assert isinstance(res.data_df, pd.DataFrame)
 
     def test_get_preview(self):
         file_bytes_io = get_remote_file_obj(self.original_data_path)
-        file_processor = CSVFileProcessor(file_bytes_io, delimiter=',')
+        file_processor = CSVFileProcessor(file_bytes_io)
         var_names, obs_preview, var_preview = file_processor.get_preview()
         assert obs_preview == [
             {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
@@ -45,7 +45,7 @@ class TestCSVFileProcessor:
 
     def test_get_preview_file_with_nans(self):
         file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/follicular_obs_sample.csv')
-        var_names, obs_preview, var_preview = CSVFileProcessor(file_bytes_io, delimiter=',').get_preview()
+        var_names, obs_preview, var_preview = CSVFileProcessor(file_bytes_io).get_preview()
         for item in obs_preview:
             for value in item.values():
                 assert value is not nan
@@ -65,7 +65,7 @@ class TestCSVFileProcessor:
     def test_model_file_validation_with_csv(self, data_csv, config_csv):
         file_bytes_io = get_remote_file_obj(f'{self.MOCK_DATA_PATH}/{data_csv}')
         metadata_file_bytes_io = get_remote_file_obj(f'{self.MOCK_CONFIGS_PATH}/{config_csv}')
-        _ = CSVFileProcessor(file_bytes_io, delimiter=',').model_file_validation(metadata_file_bytes_io)
+        _ = CSVFileProcessor(file_bytes_io).model_file_validation(metadata_file_bytes_io)
 
     invalid_tuples = [
         ('sometimes_valid_new_data.csv', 'valid_train_supervised_data_config_1.json', NotAllTargetsError),
@@ -88,7 +88,7 @@ class TestCSVFileProcessor:
         file_bytes_io = get_remote_file_obj(f'{self.MOCK_DATA_PATH}/{data_csv}')
         metadata_file_bytes_io = get_remote_file_obj(f'{self.MOCK_CONFIGS_PATH}/{config_csv}')
         with pytest.raises(exception):
-            CSVFileProcessor(file_bytes_io, delimiter=',').model_file_validation(metadata_file_bytes_io)
+            CSVFileProcessor(file_bytes_io).model_file_validation(metadata_file_bytes_io)
 
     def test_read_file_wrong_delimiter(self):
         file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/csv_example.csv')

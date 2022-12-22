@@ -14,17 +14,16 @@ from file_process.exceptions import NotAllTargetsError, ModelFileValidationVaria
 class CSVFileProcessor(FileProcessorBase):
 
     def __init__(self, file: BytesIO, **kwargs):
-        self.delimiter = kwargs.get('delimiter') or self._get_delimiter(file)
+        delimiter = kwargs.get('delimiter')
+        if not delimiter:
+            reader = pd.read_csv(file, sep=None, iterator=True, nrows=10)
+            delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
+            file.seek(0)
+        self.delimiter = delimiter
         try:
             self.data_df = pd.read_csv(file, sep=self.delimiter)
         except ParserError as exc:
             raise DelimiterError() from exc
-
-    def _get_delimiter(self, file: BytesIO):
-        reader = pd.read_csv(file, sep=None, iterator=True, nrows=10)
-        delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
-        file.seek(0)
-        return delimiter
 
     def get_observations(self):
         return self.data_df.head(min(10, self.data_df.shape[0]))
