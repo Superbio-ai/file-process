@@ -6,7 +6,7 @@ import pandas as pd
 
 from file_process.base import FileProcessorBase
 from file_process.constants import PREVIEW_ROWS_COUNT
-from file_process.exceptions import ModelFileValidationError, NoColumnsError
+from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError
 
 
 class H5ADFileProcessor(FileProcessorBase):
@@ -31,11 +31,11 @@ class H5ADFileProcessor(FileProcessorBase):
 
     def model_file_validation(self, model_metadata_file: BytesIO):
         reader = pd.read_csv(model_metadata_file, sep=',', index_col=0)
-        var_names = reader.index
-        dataset_vars = list(self.adata.var.index)
-        result = all(elem in dataset_vars for elem in var_names)
-        if not result:
-            raise ModelFileValidationError
+        var_names = set(reader.index)
+        dataset_vars = set(self.adata.var.index)
+        difference = var_names - dataset_vars
+        if difference:
+            raise ModelFileValidationVariablesError(difference)
 
     def validate(self):
         target_names = list(self.adata.obs.columns)

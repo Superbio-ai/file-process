@@ -1,7 +1,7 @@
 import pytest
 from numpy import nan
 
-from file_process.exceptions import ModelFileValidationError, NoColumnsError
+from file_process.exceptions import ModelFileValidationVariablesError, NoColumnsError
 from file_process.h5 import H5ADFileProcessor
 from tests.test_file_process import H5AD_INPUT_FILES_PATH, get_remote_file_obj
 
@@ -68,7 +68,7 @@ class TestH5ADFileProcessor:
     def test_model_file_validation_with_h5_invalid_model(self):
         file_bytes_io = get_remote_file_obj(self.path)
         model_file_bytes_io = get_remote_file_obj(self.invalid_model_path)
-        with pytest.raises(ModelFileValidationError):
+        with pytest.raises(ModelFileValidationVariablesError):
             _ = H5ADFileProcessor(file_bytes_io).model_file_validation(model_file_bytes_io)
 
     def test_validate_no_columns(self):

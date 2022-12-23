@@ -6,10 +6,6 @@ class BaseError(ABC, Exception):
     pass
 
 
-class ModelFileValidationError(BaseError):
-    message = 'Validation check failed: new data does not contain all fields required by model.'
-
-
 class NotAllTargetsError(BaseError):
     def __init__(self, targets_missing: Set[str]):
         self.message = f'Validation check failed: new data does not contain all targets required by model. ' \
@@ -24,7 +20,7 @@ class NotSomeTargetsError(BaseError):
 
 class ModelFileValidationVariablesError(BaseError):
     def __init__(self, variables_missing: Set[str]):
-        self.message = f'Validation check failed: new data does not contain any variables (columns) required by ' \
+        self.message = f'Validation check failed: new data does not contain all variables (columns) required by ' \
                        f'model. Missing variables: {variables_missing}'
 
 
