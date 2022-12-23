@@ -7,6 +7,7 @@ from numpy import number, nan
 from pandas.errors import ParserError
 
 from file_process.base import FileProcessorBase
+from file_process.constants import PREVIEW_ROWS_COUNT
 from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError, DelimiterError, \
     NotSomeTargetsError
 
@@ -25,15 +26,16 @@ class CSVFileProcessor(FileProcessorBase):
         except ParserError as exc:
             raise DelimiterError() from exc
 
-    def get_observations(self):
-        return self.data_df.head(min(10, self.data_df.shape[0]))
+    def get_observations(self, rows_number: int = None):
+        rows_number = min(10, self.data_df.shape[0]) if rows_number else self.data_df.shape[0]
+        return self.data_df.head(rows_number)
 
     def get_var_names(self):
         return list(self.data_df.columns)
 
     def get_preview(self):
         var_names = self.get_var_names()
-        obs_preview = self.get_observations()
+        obs_preview = self.get_observations(PREVIEW_ROWS_COUNT)
         return var_names, self.create_tabular_response(obs_preview), None
 
     def validate(self):
@@ -55,9 +57,8 @@ class CSVFileProcessor(FileProcessorBase):
             are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
             if not are_targets_valid:
                 raise NotSomeTargetsError(target_names)
-
-        dataset_diff = dataset_vars.difference(target_names)
-        var_names_diff = var_names.difference(target_names)
+        dataset_diff = dataset_vars - target_names
+        var_names_diff = var_names - target_names
         difference = var_names_diff - dataset_diff
         if difference:
             raise ModelFileValidationVariablesError(difference)
