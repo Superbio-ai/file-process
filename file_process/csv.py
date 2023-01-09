@@ -5,67 +5,66 @@ from io import BytesIO
 import pandas as pd
 from numpy import number, nan
 from pandas.errors import ParserError
-from werkzeug.datastructures import FileStorage
 
 from file_process.base import FileProcessorBase
-from file_process.exceptions import ModelFileValidationTargetsError, ModelFileValidationVariablesError, DelimiterError
+from file_process.constants import PREVIEW_ROWS_COUNT
+from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError, DelimiterError, \
+    NotSomeTargetsError
 
 
 class CSVFileProcessor(FileProcessorBase):
-    def read_file(self, file, **kwargs):
-        if isinstance(file, FileStorage):  # TODO try to get rid of it
-            file = file.read()
-            file = BytesIO(file)
-        read_rows_count = kwargs.get('read_rows_count', 10)
-        data = self.read_csv_with_delimiter(file, read_rows_count, delimiter=',')
-        return data
 
-    def read_csv_with_delimiter(self, data_stream, read_rows_count: int, delimiter: str = ','):
+    def __init__(self, file: BytesIO, **kwargs):
+        delimiter = kwargs.get('delimiter')
         if not delimiter:
-            reader = pd.read_csv(data_stream, sep=None, iterator=True, nrows=read_rows_count)
+            reader = pd.read_csv(file, sep=None, iterator=True, nrows=10)
             delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
-            data_stream.seek(0)
+            file.seek(0)
+        self.delimiter = delimiter
         try:
-            df = pd.read_csv(data_stream, sep=delimiter)
+            self.data_df = pd.read_csv(file, sep=self.delimiter)
         except ParserError as exc:
             raise DelimiterError() from exc
-        return df
 
-    def get_preview_data(self, df: pd.DataFrame):
-        var_names = list(df.columns)
-        obs_preview = df.head(min(10, df.shape[0]))
-        return var_names, obs_preview
+    def get_observations(self, rows_number: int = None):
+        rows_number = min(10, self.data_df.shape[0]) if rows_number else self.data_df.shape[0]
+        return self.data_df.head(rows_number)
 
-    def model_file_validation(self, df: pd.DataFrame, model_metadata_file: BytesIO, need_target: bool = True):
+    def get_var_names(self):
+        return list(self.data_df.columns)
+
+    def get_preview(self):
+        var_names = self.get_var_names()
+        obs_preview = self.get_observations(PREVIEW_ROWS_COUNT)
+        return var_names, self.create_tabular_response(obs_preview), None
+
+    def validate(self):
+        pass
+
+    def model_file_validation(self, model_metadata_file: BytesIO):
         reader = json.load(model_metadata_file)
         var_names = set(reader['columns'])
         target_names = set(reader['targets'])
         metadata = reader.get('metadata', {})
-        dataset_vars = set(df.columns)
+        dataset_vars = set(self.data_df.columns)
 
-        if need_target:
-            all_targets = metadata.get('require_all_targets', True)
-            if all_targets == 'all':
-                are_targets_valid = not target_names or all(elem in dataset_vars for elem in target_names)
-            elif all_targets == 'some':
-                are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
-            else:
-                are_targets_valid = True
+        all_targets = metadata.get('require_all_targets', 'all')
+        if all_targets == 'all':
+            difference = target_names - dataset_vars
+            if difference:
+                raise NotAllTargetsError(difference)
+        elif all_targets == 'some':
+            are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
             if not are_targets_valid:
-                raise ModelFileValidationTargetsError
-        are_variables_valid = all(elem in dataset_vars.difference(target_names)
-                                  for elem in var_names.difference(target_names))
-        if not are_variables_valid:
-            raise ModelFileValidationVariablesError
+                raise NotSomeTargetsError(target_names)
+        dataset_diff = dataset_vars - target_names
+        var_names_diff = var_names - target_names
+        difference = var_names_diff - dataset_diff
+        if difference:
+            raise ModelFileValidationVariablesError(difference)
 
-    def process(self, file, model_metadata_file: BytesIO = None, **kwargs) -> (List[str], None, pd.DataFrame):
-        df = self.read_file(file, **kwargs)
-        if model_metadata_file:
-            self.model_file_validation(df, model_metadata_file)
-        var_names, obs_preview = self.get_preview_data(df)
-        return var_names, None, obs_preview
-
-    def create_tabular_response(self, data_df: pd.DataFrame) -> List[dict]:
+    @staticmethod
+    def create_tabular_response(data_df: pd.DataFrame) -> List[dict]:
         if data_df is None:
             return []
         numeric_columns = data_df.select_dtypes(include=number).columns

@@ -9,6 +9,6 @@
         "petal_width"
     ],
     "metadata": {
-        "require_all_targets": true
+        "require_all_targets": "all"
     }
 }
