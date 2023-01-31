@@ -17,3 +17,10 @@ class FileProcessFactory:  # pylint: disable=too-few-public-methods
             if filename.endswith(extension):
                 return processor_class(file, **kwargs)
         raise WrongExtension
+
+    @classmethod
+    def validate_extension(cls, filename: str):
+        for extension in cls.EXTENSIONS_MAP.keys():
+            if filename.endswith(extension):
+                return
+        raise WrongExtension
