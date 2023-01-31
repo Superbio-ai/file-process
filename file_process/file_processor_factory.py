@@ -13,8 +13,6 @@ class FileProcessFactory:  # pylint: disable=too-few-public-methods
 
     @classmethod
     def get(cls, filename: str, file: BytesIO, **kwargs):
-        if not filename:
-            raise WrongExtension
         for extension, processor_class in cls.EXTENSIONS_MAP.items():
             if filename.endswith(extension):
                 return processor_class(file, **kwargs)
@@ -22,6 +20,8 @@ class FileProcessFactory:  # pylint: disable=too-few-public-methods
 
     @classmethod
     def validate_extension(cls, filename: str):
+        if not filename:
+            raise WrongExtension
         for extension in cls.EXTENSIONS_MAP:
             if filename.endswith(extension):
                 return
