@@ -13,8 +13,7 @@ class FileProcessFactory:  # pylint: disable=too-few-public-methods
 
     @classmethod
     def get(cls, filename: str, file: BytesIO, **kwargs):
-        for extension in cls.EXTENSIONS_MAP.keys():
+        for extension, processor_class in cls.EXTENSIONS_MAP.items():
             if filename.endswith(extension):
-                processor = cls.EXTENSIONS_MAP[extension]
-                return processor(file, **kwargs)
+                return processor_class(file, **kwargs)
         raise WrongExtension
