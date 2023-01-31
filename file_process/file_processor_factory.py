@@ -6,10 +6,15 @@ from file_process.h5 import H5ADFileProcessor
 
 
 class FileProcessFactory:  # pylint: disable=too-few-public-methods
+    SUPPORTED_EXTENSIONS = {
+        'h5': ['.h5ad'],
+        'csv': ['.csv']
+    }
+
     @classmethod
     def get(cls, filename: str, file: BytesIO, **kwargs):
-        if filename.endswith('.h5ad'):
+        if any([filename.endswith(ext) for ext in cls.SUPPORTED_EXTENSIONS['h5']]):
             return H5ADFileProcessor(file, **kwargs)
-        if filename.endswith('.csv'):
+        if any([filename.endswith(ext) for ext in cls.SUPPORTED_EXTENSIONS['csv']]):
             return CSVFileProcessor(file, **kwargs)
         raise WrongExtension
