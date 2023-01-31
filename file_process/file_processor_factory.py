@@ -20,7 +20,7 @@ class FileProcessFactory:  # pylint: disable=too-few-public-methods
 
     @classmethod
     def validate_extension(cls, filename: str):
-        for extension in cls.EXTENSIONS_MAP.keys():
+        for extension in cls.EXTENSIONS_MAP:
             if filename.endswith(extension):
                 return
         raise WrongExtension

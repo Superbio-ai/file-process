@@ -1,5 +1,5 @@
 [MESSAGES CONTROL]
-disable=missing-docstring,no-member,notimplemented-raised,raising-bad-type,broad-except,fixme,todo,no-self-use,consider-iterating-dictionary
+disable=missing-docstring,no-member,notimplemented-raised,raising-bad-type,broad-except,fixme,todo,no-self-use
 
 [FORMAT]
 # Maximum number of characters on a single line.
