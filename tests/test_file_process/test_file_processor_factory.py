@@ -24,3 +24,12 @@ class TestFileProcessFactory:
         file_bytes_io = get_remote_file_obj(TestCSVFileProcessor.original_data_path)
         res = FileProcessFactory.get(TestCSVFileProcessor.original_data_path, file_bytes_io)
         assert isinstance(res, CSVFileProcessor)
+
+    def test_validate_wrong_extension(self):
+        filename = 'fastq.fastq'
+        with pytest.raises(WrongExtension):
+            _ = FileProcessFactory.validate_extension(filename)
+
+    def test_validate_extension(self):
+        filename = 'fastq.h5ad'
+        FileProcessFactory.validate_extension(filename)

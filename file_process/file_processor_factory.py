@@ -6,10 +6,23 @@ from file_process.h5 import H5ADFileProcessor
 
 
 class FileProcessFactory:  # pylint: disable=too-few-public-methods
+    EXTENSIONS_MAP = {
+        '.h5ad': H5ADFileProcessor,
+        '.csv': CSVFileProcessor
+    }
+
     @classmethod
     def get(cls, filename: str, file: BytesIO, **kwargs):
-        if filename.endswith('.h5ad'):
-            return H5ADFileProcessor(file, **kwargs)
-        if filename.endswith('.csv'):
-            return CSVFileProcessor(file, **kwargs)
+        for extension, processor_class in cls.EXTENSIONS_MAP.items():
+            if filename.endswith(extension):
+                return processor_class(file, **kwargs)
+        raise WrongExtension
+
+    @classmethod
+    def validate_extension(cls, filename: str):
+        if not filename:
+            raise WrongExtension
+        for extension in cls.EXTENSIONS_MAP:
+            if filename.endswith(extension):
+                return
         raise WrongExtension
