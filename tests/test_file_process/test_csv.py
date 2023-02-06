@@ -4,7 +4,7 @@ import pytest
 from numpy import nan
 import pandas as pd
 
-from file_process.csv import CSVFileProcessor
+from file_process.csv.csv_processor import CSVFileProcessor
 from file_process.exceptions import DelimiterError, NotAllTargetsError, ModelFileValidationVariablesError
 from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 

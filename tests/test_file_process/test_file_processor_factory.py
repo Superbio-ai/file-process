@@ -1,6 +1,6 @@
 import pytest
 
-from file_process.csv import CSVFileProcessor
+from file_process.csv.csv_processor import CSVFileProcessor
 from file_process.exceptions import WrongExtension
 from file_process.file_processor_factory import FileProcessFactory
 from file_process.h5ad.h5ad_processor import H5ADFileProcessor
