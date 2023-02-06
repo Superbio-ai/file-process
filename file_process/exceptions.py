@@ -34,3 +34,15 @@ class DelimiterError(BaseError):
 
 class NoColumnsError(BaseError):
     message = 'No columns in file.'
+
+
+class NoExpression(BaseError):
+    message = 'The h5ad artifact does not contain expression data ".X".'
+
+
+class DataIsNormalized(BaseError):
+    message = 'Data should not be normalized.'
+
+
+class DataIsNotFinite(BaseError):
+    message = 'Data must be finite.'

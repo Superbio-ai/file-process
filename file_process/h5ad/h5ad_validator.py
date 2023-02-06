@@ -5,7 +5,8 @@ from anndata import AnnData
 from scanpy.get import _get_obs_rep
 from scipy.sparse import issparse
 
-from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError
+from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError, NoExpression, DataIsNormalized, \
+    DataIsNotFinite
 from file_process.h5ad.schemas import SbioModelData
 from file_process.logger import logger
 
@@ -48,36 +49,28 @@ class H5ADValidator:
 
     def _check_x(self):
         if not hasattr(self.adata, 'X'):
-            raise Exception('The h5ad artifact does not contain expression data ".X".')
+            raise NoExpression
 
     def _check_structure_warnings(self):
         warnings = []
         if not hasattr(self.adata, 'obs'):
-            warnings.append(
-                'The h5ad artifact does not contain observation information ".obs".'
-            )
+            warnings.append('The h5ad artifact does not contain observation information ".obs".')
 
         if not hasattr(self.adata, 'var'):
-            warnings.append(
-                'The h5ad artifact does not contain variable information ".var".'
-            )
+            warnings.append('The h5ad artifact does not contain variable information ".var".')
 
         if not hasattr(self.adata, 'obsm'):
-            warnings.append(
-                'The h5ad artifact does not contain experiment design information ".obsm".'
-            )
+            warnings.append('The h5ad artifact does not contain experiment design information ".obsm".')
 
         if not hasattr(self.adata, 'uns'):
-            warnings.append(
-                'The h5ad artifact does not contain schema information ".uns".'
-            )
+            warnings.append('The h5ad artifact does not contain schema information ".uns".')
         return warnings
 
     def _check_normed(self, obs_key: Optional[str] = None):
         data = _get_obs_rep(self.adata, layer=obs_key)
         diff_sum = np.array(data != data[0]).sum()
         if diff_sum == 0:
-            raise Exception('Data cannot be normalized.')
+            raise DataIsNormalized
 
     def _check_finite(self, obs_key: Optional[str] = None):
         data = _get_obs_rep(self.adata, layer=obs_key)
@@ -85,12 +78,9 @@ class H5ADValidator:
             is_finite = np.isfinite(data.A).all()
         else:
             is_finite = np.isfinite(data).all()
-        if is_finite:
-            raise Exception('The data is finite.')
+        if not is_finite:
+            raise DataIsNotFinite
 
     def _validate_encoding_version(self):
-        pass
-        # encoding_dict = dict(f.attrs)
-        # encoding_version = encoding_dict.get("encoding-version")
-        # if encoding_version != "0.1.0":
-        #     "The h5ad artifact was generated with an AnnData version different from 0.8.0."
+        # TODO check
+        return ["The h5ad artifact was generated with an AnnData version different from 0.8.0."]
