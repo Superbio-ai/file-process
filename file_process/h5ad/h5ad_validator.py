@@ -48,7 +48,7 @@ class H5ADValidator:
 
     def _check_x(self):
         if not hasattr(self.adata, 'X'):
-            raise Exception('The h5ad artifact does not contain expression data".X".')
+            raise Exception('The h5ad artifact does not contain expression data ".X".')
 
     def _check_structure_warnings(self):
         warnings = []
@@ -89,6 +89,7 @@ class H5ADValidator:
             raise Exception('The data is finite.')
 
     def _validate_encoding_version(self):
+        pass
         # encoding_dict = dict(f.attrs)
         # encoding_version = encoding_dict.get("encoding-version")
         # if encoding_version != "0.1.0":
