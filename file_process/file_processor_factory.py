@@ -1,8 +1,8 @@
 from io import BytesIO
 
-from file_process.csv import CSVFileProcessor
+from file_process.csv.csv_processor import CSVFileProcessor
 from file_process.exceptions import WrongExtension
-from file_process.h5 import H5ADFileProcessor
+from file_process.h5ad.h5ad_processor import H5ADFileProcessor
 
 
 class FileProcessFactory:  # pylint: disable=too-few-public-methods
