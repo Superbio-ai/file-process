@@ -16,7 +16,9 @@ class H5ADFileProcessor(FileProcessorBase):
         self.adata = anndata.read_h5ad(file)
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None):
-        model_data = SbioModelData(model_metadata_file)
+        model_data = None
+        if model_metadata_file:
+            model_data = SbioModelData(model_metadata_file)
         validator = H5ADValidator(self.adata, model_data)
         validator()
 

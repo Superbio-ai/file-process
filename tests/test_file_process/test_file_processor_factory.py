@@ -6,7 +6,7 @@ from file_process.file_processor_factory import FileProcessFactory
 from file_process.h5ad.h5ad_processor import H5ADFileProcessor
 from tests.test_file_process import get_remote_file_obj
 from tests.test_file_process.test_csv import TestCSVFileProcessor
-from tests.test_file_process.test_h5 import TestH5ADFileProcessor
+from tests.test_file_process.test_h5ad.test_h5ad_processor import TestH5ADFileProcessor
 
 
 class TestFileProcessFactory:
