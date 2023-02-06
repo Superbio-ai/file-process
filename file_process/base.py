@@ -1,7 +1,4 @@
-from abc import ABC, abstractmethod
-from typing import List
-
-from file_process.h5ad.schemas import SbioModelData
+from abc import ABC
 
 
 class FileProcessorBase(ABC):
