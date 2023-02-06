@@ -13,13 +13,14 @@ from file_process.h5ad.schemas import SbioModelData
 class H5ADFileProcessor(FileProcessorBase):
 
     def __init__(self, file, **_):
+        # Add test we can read the file with path
         self.adata = anndata.read_h5ad(file)
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None):
         model_data = None
         if model_metadata_file:
             model_data = SbioModelData(model_metadata_file)
-        validator = H5ADValidator(self.adata, model_data)
+        validator = H5ADValidator(self.adata, model_data, enable_warnings=False)
         validator()
 
     def get_targets(self):
