@@ -1,15 +1,12 @@
 from abc import ABC, abstractmethod
-from io import BytesIO
 from typing import List
+
+from file_process.h5ad.schemas import SbioModelData
 
 
 class FileProcessorBase(ABC):
     @abstractmethod
-    def validate(self):
-        pass
-
-    @abstractmethod
-    def model_file_validation(self, model_metadata_file: BytesIO):
+    def validate(self, model_data: SbioModelData):
         pass
 
     @abstractmethod

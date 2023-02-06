@@ -1,18 +1,19 @@
-from io import BytesIO
 from typing import Optional
 
 from anndata import AnnData
 
 from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError
-from file_process.h5ad.schemas import ModelData
+from file_process.h5ad.schemas import SbioModelData
 
 
 class H5ADValidator:
-    def __init__(self, adata: AnnData, model_metadata_file: Optional[BytesIO] = None):
+    def __init__(self, adata: AnnData, model_data: Optional[SbioModelData] = None):
         self.adata = adata
-        self.model_data = None
-        if model_metadata_file:
-            self.model_data = ModelData(model_metadata_file)
+        self.model_data = model_data
+
+    def __call__(self):
+        self.validate()
+        self.model_file_validation()
 
     def validate(self):
         target_names = list(self.adata.obs.columns)
