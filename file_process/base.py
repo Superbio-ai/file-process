@@ -1,17 +1,12 @@
-from abc import ABC, abstractmethod
-from io import BytesIO
-from typing import List
+from abc import ABC
 
 
 class FileProcessorBase(ABC):
-    @abstractmethod
-    def validate(self):
-        pass
-
-    @abstractmethod
-    def model_file_validation(self, model_metadata_file: BytesIO):
-        pass
-
-    @abstractmethod
-    def get_preview(self) -> (List[str], List[dict], List[dict]):
-        pass
+    pass
+    # @abstractmethod
+    # def validate(self, model_data: SbioModelData):
+    #     pass
+    #
+    # @abstractmethod
+    # def get_preview(self) -> (List[str], List[dict], List[dict]):
+    #     pass

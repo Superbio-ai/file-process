@@ -60,18 +60,20 @@ class TestH5ADFileProcessor:
         assert obs_preview != []
         assert var_preview == []
 
-    def test_model_file_validation_with_h5(self):
+    def test_h5ad_processor_validates(self):
         file_bytes_io = get_remote_file_obj(self.path)
-        model_file_bytes_io = get_remote_file_obj(self.valid_model_path)
-        _ = H5ADFileProcessor(file_bytes_io).model_file_validation(model_file_bytes_io)
+        model_metodata_file = get_remote_file_obj(self.valid_model_path)
+        processor = H5ADFileProcessor(file_bytes_io)
+        _ = processor.validate(model_metodata_file)
 
-    def test_model_file_validation_with_h5_invalid_model(self):
+    def test_h5ad_processor_validates_invaild_model(self):
         file_bytes_io = get_remote_file_obj(self.path)
-        model_file_bytes_io = get_remote_file_obj(self.invalid_model_path)
+        model_metodata_file = get_remote_file_obj(self.invalid_model_path)
+        processor = H5ADFileProcessor(file_bytes_io)
         with pytest.raises(ModelFileValidationVariablesError):
-            _ = H5ADFileProcessor(file_bytes_io).model_file_validation(model_file_bytes_io)
+            _ = processor.validate(model_metodata_file)
 
-    def test_validate_no_columns(self):
+    def test_h5ad_processor_validates_no_columns(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/pbmc3k_raw.h5ad')
         with pytest.raises(NoColumnsError):
             H5ADFileProcessor(file_bytes_io).validate()
