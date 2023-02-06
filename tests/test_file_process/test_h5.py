@@ -2,7 +2,7 @@ import pytest
 from numpy import nan
 
 from file_process.exceptions import ModelFileValidationVariablesError, NoColumnsError
-from file_process.h5 import H5ADFileProcessor
+from file_process.h5ad.h5ad_processor import H5ADFileProcessor
 from tests.test_file_process import H5AD_INPUT_FILES_PATH, get_remote_file_obj
 
 

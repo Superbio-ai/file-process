@@ -3,7 +3,7 @@ import pytest
 from file_process.csv import CSVFileProcessor
 from file_process.exceptions import WrongExtension
 from file_process.file_processor_factory import FileProcessFactory
-from file_process.h5 import H5ADFileProcessor
+from file_process.h5ad.h5ad_processor import H5ADFileProcessor
 from tests.test_file_process import get_remote_file_obj
 from tests.test_file_process.test_csv import TestCSVFileProcessor
 from tests.test_file_process.test_h5 import TestH5ADFileProcessor
