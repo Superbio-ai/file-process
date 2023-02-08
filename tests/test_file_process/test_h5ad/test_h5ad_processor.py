@@ -1,7 +1,5 @@
-import pytest
 from numpy import nan
 
-from file_process.exceptions import ModelFileValidationVariablesError, NoColumnsError
 from file_process.h5ad.h5ad_processor import H5ADFileProcessor
 from tests.test_file_process import H5AD_INPUT_FILES_PATH, get_remote_file_obj
 
@@ -9,9 +7,13 @@ from tests.test_file_process import H5AD_INPUT_FILES_PATH, get_remote_file_obj
 class TestH5ADFileProcessor:
     path = f'{H5AD_INPUT_FILES_PATH}/heart_sample.h5ad'
 
-    def test_read_file(self):
+    def test_read_remote_file(self):
         file_bytes_io = get_remote_file_obj(self.path)
         res = H5ADFileProcessor(file_bytes_io)
+        assert res
+
+    def test_read_file_from_path(self):
+        res = H5ADFileProcessor(self.path)
         assert res
 
     def test_get_preview(self):
