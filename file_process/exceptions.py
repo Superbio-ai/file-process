@@ -36,7 +36,7 @@ class NoColumnsError(BaseError):
     message = 'No columns in file.'
 
 
-class NoExpression(BaseError):
+class NoXExpression(BaseError):
     message = 'The h5ad artifact does not contain expression data ".X".'
 
 

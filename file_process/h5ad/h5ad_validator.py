@@ -5,7 +5,7 @@ from anndata import AnnData
 from scanpy.get import _get_obs_rep
 from scipy.sparse import issparse
 
-from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError, NoExpression, DataIsNormalized, \
+from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError, NoXExpression, DataIsNormalized, \
     DataIsNotFinite
 from file_process.h5ad.schemas import SbioModelData
 from file_process.logger import logger
@@ -24,13 +24,13 @@ class H5ADValidator:
     def validate(self):
         self._validate_target_names_present()
         self._check_x()
-        self._check_normed()
+        self._check_not_normed()
         self._check_finite()
 
         if self.enable_warnings:
             warnings = []
-            warnings += self._check_structure_warnings()
-            warnings += self._validate_encoding_version()
+            warnings += self._get_structure_warnings()
+            warnings += self._get_encoding_version_warnings()
             if warnings:
                 logger.info(f"Warnings: {warnings}")
 
@@ -49,9 +49,9 @@ class H5ADValidator:
 
     def _check_x(self):
         if not hasattr(self.adata, 'X'):
-            raise NoExpression
+            raise NoXExpression
 
-    def _check_structure_warnings(self):
+    def _get_structure_warnings(self):
         warnings = []
         if not hasattr(self.adata, 'obs'):
             warnings.append('The h5ad artifact does not contain observation information ".obs".')
@@ -66,7 +66,7 @@ class H5ADValidator:
             warnings.append('The h5ad artifact does not contain schema information ".uns".')
         return warnings
 
-    def _check_normed(self, obs_key: Optional[str] = None):
+    def _check_not_normed(self, obs_key: Optional[str] = None):
         data = _get_obs_rep(self.adata, layer=obs_key)
         diff_sum = np.array(data != data[0]).sum()
         if diff_sum == 0:
@@ -81,6 +81,6 @@ class H5ADValidator:
         if not is_finite:
             raise DataIsNotFinite
 
-    def _validate_encoding_version(self):
+    def _get_encoding_version_warnings(self):
         # TODO check
         return ["The h5ad artifact was generated with an AnnData version different from 0.8.0."]
