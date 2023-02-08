@@ -38,31 +38,6 @@ class CSVFileProcessor(FileProcessorBase):
         obs_preview = self.get_observations(PREVIEW_ROWS_COUNT)
         return var_names, self.create_tabular_response(obs_preview), None
 
-    def validate(self):
-        pass
-
-    def model_file_validation(self, model_metadata_file: BytesIO):
-        reader = json.load(model_metadata_file)
-        var_names = set(reader['columns'])
-        target_names = set(reader['targets'])
-        metadata = reader.get('metadata', {})
-        dataset_vars = set(self.data_df.columns)
-
-        all_targets = metadata.get('require_all_targets', 'all')
-        if all_targets == 'all':
-            difference = target_names - dataset_vars
-            if difference:
-                raise NotAllTargetsError(difference)
-        elif all_targets == 'some':
-            are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
-            if not are_targets_valid:
-                raise NotSomeTargetsError(target_names)
-        dataset_diff = dataset_vars - target_names
-        var_names_diff = var_names - target_names
-        difference = var_names_diff - dataset_diff
-        if difference:
-            raise ModelFileValidationVariablesError(difference)
-
     @staticmethod
     def create_tabular_response(data_df: pd.DataFrame) -> List[dict]:
         if data_df is None:
