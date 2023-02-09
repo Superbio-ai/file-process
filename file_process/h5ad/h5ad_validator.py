@@ -68,7 +68,10 @@ class H5ADValidator:
 
     def _check_not_normed(self, obs_key: Optional[str] = None):
         data = _get_obs_rep(self.adata, layer=obs_key)
-        diff_sum = np.array(data != data[0]).sum()
+        if issparse(data):
+            diff_sum = np.array(data.A != data.A[0]).sum()
+        else:
+            diff_sum = np.array(data != data[0]).sum()
         if diff_sum == 0:
             raise DataIsNormalized
 
