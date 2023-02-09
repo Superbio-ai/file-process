@@ -21,12 +21,31 @@ class CSVValidator:
 
     def validate(self):
         if self.validation_rules.column_names_required:
-            # TODO check that columns are named
-            # TODO make a validation based on column names
-            pass
+
+            self._validate_columns()
+
         else:
             # TODO make a validation based on indexes
             pass
+
+    def _validate_columns(self):
+        columns = set(self.data_df.columns)
+        if self.validation_rules.column_names_required:
+            if not columns:
+                raise Exception('Columns must be named')
+            for index, column in enumerate(columns):
+                self._validate_column(column, self.validation_rules.columns[index])
+    # self.name = validation_rules.get('name')
+    #         self.allowed_types = validation_rules.get('allowedTypes')
+    #         self.required = validation_rules.get('required')
+    #         self.allow_missings = validation_rules.get('allowMissingss')
+    #         self.allow_duplicates = validation_rules.get('allowDuplicates')
+    #         self.min = validation_rules.get('min')
+    #         self.max = validation_rules.get('max')
+    #         self.allowed_values = validation_rules.get('allowedValues')
+    # def _validate_column(self, column, rules):
+    #     if column
+
 
     def model_file_validation(self):
         reader = json.load(self.model_metadata_file)
