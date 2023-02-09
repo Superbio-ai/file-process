@@ -48,7 +48,7 @@ class H5ADValidator:
             raise NoColumnsError
 
     def _check_x(self):
-        if not hasattr(self.adata, 'X'):
+        if not getattr(self.adata, 'X', None):
             raise NoXExpression
 
     def _get_structure_warnings(self):
