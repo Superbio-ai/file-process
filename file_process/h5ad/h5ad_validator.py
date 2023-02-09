@@ -32,7 +32,7 @@ class H5ADValidator:
             warnings += self._get_structure_warnings()
             warnings += self._get_encoding_version_warnings()
             if warnings:
-                logger.info(f"Warnings: %s" % warnings)
+                logger.info(f"Warnings: %s", warnings)
 
     def model_file_validation(self):
         if not self.model_data:
