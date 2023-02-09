@@ -5,8 +5,8 @@ from anndata import AnnData
 from scanpy.get import _get_obs_rep
 from scipy.sparse import issparse
 
-from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError, NoXExpression, DataIsNormalized, \
-    DataIsNotFinite
+from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError, NoXExpression, \
+    DataIsNormalized, DataIsNotFinite
 from file_process.h5ad.schemas import SbioModelData
 from file_process.logger import logger
 
@@ -32,7 +32,7 @@ class H5ADValidator:
             warnings += self._get_structure_warnings()
             warnings += self._get_encoding_version_warnings()
             if warnings:
-                logger.info(f"Warnings: {warnings}")
+                logger.info(f"Warnings: %s" % warnings)
 
     def model_file_validation(self):
         if not self.model_data:
