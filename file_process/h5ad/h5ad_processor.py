@@ -19,7 +19,7 @@ class H5ADFileProcessor(FileProcessorBase):
         model_data = None
         if model_metadata_file:
             model_data = SbioModelData(model_metadata_file)
-        validator = H5ADValidator(self.adata, model_data)
+        validator = H5ADValidator(self.adata, model_data, enable_warnings=False)
         validator()
 
     def get_targets(self):
