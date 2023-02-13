@@ -1,13 +1,7 @@
 class ColumnValidationRule:
-    type_map = {
-        'str': str,
-        'int': int,
-        'float': float
-    }
 
     def __init__(self, validation_rules: dict):
         self.name = validation_rules.get('name')
-        # self.allowed_types = [self.type_map[type_] for type_ in validation_rules.get('allowedTypes')]
         self.allowed_types = validation_rules.get('typesAllowed')
         self.required = validation_rules.get('required')
         self.allow_missings = validation_rules.get('allowMissingss')
