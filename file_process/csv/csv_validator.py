@@ -2,17 +2,18 @@ import json
 from io import BytesIO
 from typing import Optional
 
-from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError
+from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError, \
+    CustomValidationException
 from pandas import DataFrame
 
-from file_process.csv.schemas import CSVValidationRules
+from file_process.csv.schemas import TabularValidationRules
 
 
 class CSVValidator:
-    def __int__(self, data_df: DataFrame, validation_rules: CSVValidationRules,
-                model_metadata_file: Optional[BytesIO] = None):
+    def __init__(self, data_df: DataFrame, validation_rules: Optional[dict],
+                 model_metadata_file: Optional[BytesIO] = None):
         self.data_df = data_df
-        self.validation_rules = validation_rules
+        self.rules = TabularValidationRules(validation_rules) if validation_rules else None
         self.model_metadata_file = model_metadata_file
 
     def __call__(self):
@@ -20,34 +21,61 @@ class CSVValidator:
         self.model_file_validation()
 
     def validate(self):
-        if self.validation_rules.column_names_required:
+        if not self.rules:
+            return
+        self._validate_column_names()
+        self._validate_columns()
 
-            self._validate_columns()
-
+    def _validate_column_names(self):
+        if self.rules.column_names_required:
+            column_names = self.data_df.columns.values.tolist()
+            for col in self.rules.columns:
+                if col.required and col.name not in column_names:
+                    all_required_columns = [col.name for col in self.rules.columns if col.required]
+                    raise CustomValidationException(f'Missing {col.name} column in the file. '
+                                                    f'List of required columns: [{all_required_columns}]')
+            if not self.rules.accept_other_columns:
+                allowed_column_names = [col.name for col in self.rules.columns]
+                for col in column_names:
+                    if col not in allowed_column_names:
+                        raise CustomValidationException(f'Invalid column: {col}. '
+                                                        f'The list of allowed column names: {allowed_column_names}')
         else:
-            # TODO make a validation based on indexes
-            pass
+            raise NotImplemented
 
     def _validate_columns(self):
-        columns = set(self.data_df.columns)
-        if self.validation_rules.column_names_required:
-            if not columns:
-                raise Exception('Columns must be named')
-            for index, column in enumerate(columns):
-                self._validate_column(column, self.validation_rules.columns[index])
-    # self.name = validation_rules.get('name')
-    #         self.allowed_types = validation_rules.get('allowedTypes')
-    #         self.required = validation_rules.get('required')
-    #         self.allow_missings = validation_rules.get('allowMissingss')
-    #         self.allow_duplicates = validation_rules.get('allowDuplicates')
-    #         self.min = validation_rules.get('min')
-    #         self.max = validation_rules.get('max')
-    #         self.allowed_values = validation_rules.get('allowedValues')
-    # def _validate_column(self, column, rules):
-    #     if column
+        rules = {c.name: c for c in self.rules.columns}
+        for name, data in self.data_df.iteritems():
+            self._validate_column(name, data, rules.get(name))
 
+    def _validate_column(self, name, data, rule):
+        if rule.allowed_types:
+            type_ = rule.allowed_types[0]
+            try:
+                data.astype(type_)
+            except Exception as e:
+                text = str(e)
+                raise CustomValidationException(f'All values under {name} column must be one of the following types: '
+                                                f'{rule.allowed_types}. {text.capitalize()}.')
+        if not rule.allow_missings:
+            if data.isna().sum():
+                raise CustomValidationException(f'Column {name} has missings and it is not allowed.')
+        if not rule.allow_duplicates:
+            if data.duplicated().any():
+                raise CustomValidationException(f'Column {name} has duplicates and it is not allowed.')
+        if rule.min is not None:
+            if data.le(rule.min).any():
+                raise CustomValidationException(f'Min value in column {name} can be {rule.min}.')
+        if rule.max is not None:
+            if data.le(rule.max).any():
+                raise CustomValidationException(f'Max value in column {name} can be {rule.max}.')
+        if rule.allowed_values:
+            if not data.eq(rule.allowed).all():
+                raise CustomValidationException(f'For {name} column the list of allowed values is {rule.allowed_values}.')
 
     def model_file_validation(self):
+        if not self.model_metadata_file:
+            return
         reader = json.load(self.model_metadata_file)
         var_names = set(reader['columns'])
         target_names = set(reader['targets'])
@@ -68,4 +96,3 @@ class CSVValidator:
         difference = var_names_diff - dataset_diff
         if difference:
             raise ModelFileValidationVariablesError(difference)
-
