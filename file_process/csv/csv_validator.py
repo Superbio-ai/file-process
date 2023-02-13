@@ -23,25 +23,23 @@ class CSVValidator:
     def validate(self):
         if not self.rules:
             return
-        self._validate_column_names()
-        self._validate_columns()
+        if self.rules.column_names_required:
+            self._validate_column_names()
+            self._validate_columns()
 
     def _validate_column_names(self):
-        if self.rules.column_names_required:
-            column_names = self.data_df.columns.values.tolist()
-            for col in self.rules.columns:
-                if col.required and col.name not in column_names:
-                    all_required_columns = [col.name for col in self.rules.columns if col.required]
-                    raise CustomValidationException(f'Missing {col.name} column in the file. '
-                                                    f'List of required columns: [{all_required_columns}]')
-            if not self.rules.accept_other_columns:
-                allowed_column_names = [col.name for col in self.rules.columns]
-                for col in column_names:
-                    if col not in allowed_column_names:
-                        raise CustomValidationException(f'Invalid column: {col}. '
-                                                        f'The list of allowed column names: {allowed_column_names}')
-        else:
-            raise NotImplemented
+        column_names = self.data_df.columns.values.tolist()
+        for col in self.rules.columns:
+            if col.required and col.name not in column_names:
+                all_required_columns = [col.name for col in self.rules.columns if col.required]
+                raise CustomValidationException(f'Missing {col.name} column in the file. '
+                                                f'List of required columns: [{all_required_columns}]')
+        if not self.rules.accept_other_columns:
+            allowed_column_names = [col.name for col in self.rules.columns]
+            for col in column_names:
+                if col not in allowed_column_names:
+                    raise CustomValidationException(f'Invalid column: {col}. '
+                                                    f'The list of allowed column names: {allowed_column_names}')
 
     def _validate_columns(self):
         rules = {c.name: c for c in self.rules.columns}
