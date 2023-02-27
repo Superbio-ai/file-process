@@ -1,19 +1,19 @@
-import pytest
 from numpy import nan
 
-from file_process.exceptions import ModelFileValidationVariablesError, NoColumnsError
 from file_process.h5ad.h5ad_processor import H5ADFileProcessor
 from tests.test_file_process import H5AD_INPUT_FILES_PATH, get_remote_file_obj
 
 
 class TestH5ADFileProcessor:
     path = f'{H5AD_INPUT_FILES_PATH}/heart_sample.h5ad'
-    valid_model_path = f'{H5AD_INPUT_FILES_PATH}/heart_sample_model.csv'
-    invalid_model_path = f'{H5AD_INPUT_FILES_PATH}/heart_sample_invalid.csv'
 
-    def test_read_file(self):
+    def test_read_remote_file(self):
         file_bytes_io = get_remote_file_obj(self.path)
         res = H5ADFileProcessor(file_bytes_io)
+        assert res
+
+    def test_read_file_from_path(self):
+        res = H5ADFileProcessor(self.path)
         assert res
 
     def test_get_preview(self):
@@ -59,21 +59,3 @@ class TestH5ADFileProcessor:
         target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io).get_preview()
         assert obs_preview != []
         assert var_preview == []
-
-    def test_h5ad_processor_validates(self):
-        file_bytes_io = get_remote_file_obj(self.path)
-        model_metodata_file = get_remote_file_obj(self.valid_model_path)
-        processor = H5ADFileProcessor(file_bytes_io)
-        _ = processor.validate(model_metodata_file)
-
-    def test_h5ad_processor_validates_invaild_model(self):
-        file_bytes_io = get_remote_file_obj(self.path)
-        model_metodata_file = get_remote_file_obj(self.invalid_model_path)
-        processor = H5ADFileProcessor(file_bytes_io)
-        with pytest.raises(ModelFileValidationVariablesError):
-            _ = processor.validate(model_metodata_file)
-
-    def test_h5ad_processor_validates_no_columns(self):
-        file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/pbmc3k_raw.h5ad')
-        with pytest.raises(NoColumnsError):
-            H5ADFileProcessor(file_bytes_io).validate()

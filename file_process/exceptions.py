@@ -39,3 +39,15 @@ class NoColumnsError(BaseError):
 class CustomValidationException(BaseError):
     def __init__(self, message: str):
         self.message = message
+
+
+class NoXExpression(BaseError):
+    message = 'The h5ad artifact does not contain expression data ".X".'
+
+
+class DataIsNormalized(BaseError):
+    message = 'Data should not be normalized.'
+
+
+class DataIsNotFinite(BaseError):
+    message = 'Data must be finite.'

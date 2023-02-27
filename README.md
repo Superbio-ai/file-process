@@ -4,7 +4,7 @@ Package that can validate and return preview for different files.
 
 Currenty supported extensions:
 
-- .h5, .h5ad
+- .h5ad
 - .csv
 
 Usage:
@@ -15,7 +15,12 @@ pip install file_process
 
 ```
 from file_process import preview_file
-target_names, var_preview, obs_preview = preview file(filename, file, model_metadata_file)
+try:
+    processor = FileProcessFactory.get(file_data.filename, file_data.file)
+except WrongExtension as exc:
+    raise CustomException from exc
+processor.validate(model_metadata_file)
+target_names, var_preview, obs_preview = processor.get_preview()
 ```
 
 where:
