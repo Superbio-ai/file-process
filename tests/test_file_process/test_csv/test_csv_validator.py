@@ -3,7 +3,7 @@ from io import BytesIO
 import pytest
 
 from file_process.csv.csv_processor import CSVFileProcessor
-from file_process.exceptions import DelimiterError, NotAllTargetsError, ModelFileValidationVariablesError
+from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError
 from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
 
@@ -57,7 +57,3 @@ class TestCSVValidator:
         with pytest.raises(exception):
             _ = CSVFileProcessor(file_bytes_io).validate(metadata_file_bytes_io)
 
-    def test_read_file_wrong_delimiter(self):
-        file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/csv_example.csv')
-        with pytest.raises(DelimiterError):
-            _ = CSVFileProcessor(file_bytes_io, delimiter='.')

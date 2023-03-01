@@ -1,5 +1,7 @@
 from io import BytesIO
 
+import pytest
+from file_process.exceptions import DelimiterError
 from numpy import nan
 import pandas as pd
 
@@ -47,3 +49,8 @@ class TestCSVFileProcessor:
         for item in obs_preview:
             for value in item.values():
                 assert value is not nan
+
+    def test_read_file_wrong_delimiter(self):
+        file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/csv_example.csv')
+        with pytest.raises(DelimiterError):
+            _ = CSVFileProcessor(file_bytes_io, delimiter='.')
