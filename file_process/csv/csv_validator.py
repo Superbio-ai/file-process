@@ -6,15 +6,15 @@ from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, Mod
     CustomValidationException
 from pandas import DataFrame
 
-from file_process.csv.schemas import TabularValidationRules
+from file_process.csv.schemas import TabularValidationRules, SbioModelDataForCsv
 
 
 class CSVValidator:
     def __init__(self, data_df: DataFrame, validation_rules: Optional[dict],
-                 model_metadata_file: Optional[BytesIO] = None):
+                 model_data: Optional[SbioModelDataForCsv] = None):
         self.data_df = data_df
         self.rules = TabularValidationRules(validation_rules) if validation_rules else None
-        self.model_metadata_file = model_metadata_file
+        self.model_data = model_data
 
     def __call__(self):
         self.validate()
@@ -72,25 +72,23 @@ class CSVValidator:
                 raise CustomValidationException(f'For {name} column the list of allowed values is {rule.allowed_values}.')
 
     def model_file_validation(self):
-        if not self.model_metadata_file:
+        if not self.model_data:
             return
-        reader = json.load(self.model_metadata_file)
-        var_names = set(reader['columns'])
-        target_names = set(reader['targets'])
-        metadata = reader.get('metadata', {})
+
+        model_target_names = self.model_data.target_names
         dataset_vars = set(self.data_df.columns)
 
-        all_targets = metadata.get('require_all_targets', 'all')
+        all_targets = self.model_data.metadata.get('require_all_targets', 'all')
         if all_targets == 'all':
-            difference = target_names - dataset_vars
+            difference = model_target_names - dataset_vars
             if difference:
                 raise NotAllTargetsError(difference)
         elif all_targets == 'some':
-            are_targets_valid = not target_names or any(elem in dataset_vars for elem in target_names)
+            are_targets_valid = not model_target_names or any(elem in dataset_vars for elem in model_target_names)
             if not are_targets_valid:
-                raise NotSomeTargetsError(target_names)
-        dataset_diff = dataset_vars - target_names
-        var_names_diff = var_names - target_names
+                raise NotSomeTargetsError(model_target_names)
+        dataset_diff = dataset_vars - model_target_names
+        var_names_diff = self.model_data.var_names - model_target_names
         difference = var_names_diff - dataset_diff
         if difference:
             raise ModelFileValidationVariablesError(difference)

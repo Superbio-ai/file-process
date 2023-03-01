@@ -7,12 +7,12 @@ from scipy.sparse import issparse
 
 from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError, NoXExpression, \
     DataIsNormalized, DataIsNotFinite
-from file_process.h5ad.schemas import SbioModelData
+from file_process.h5ad.schemas import SbioModelDataForH5ad
 from file_process.logger import logger
 
 
 class H5ADValidator:
-    def __init__(self, adata: AnnData, model_data: Optional[SbioModelData] = None, enable_warnings: bool = True):
+    def __init__(self, adata: AnnData, model_data: Optional[SbioModelDataForH5ad] = None, enable_warnings: bool = True):
         self.adata = adata
         self.model_data = model_data
         self.enable_warnings = enable_warnings

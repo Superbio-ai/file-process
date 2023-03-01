@@ -8,6 +8,7 @@ from pandas.errors import ParserError
 from file_process.base import FileProcessorBase
 from file_process.constants import PREVIEW_ROWS_COUNT
 from file_process.csv.csv_validator import CSVValidator
+from file_process.csv.schemas import SbioModelDataForCsv
 from file_process.exceptions import DelimiterError
 
 
@@ -27,8 +28,8 @@ class CSVFileProcessor(FileProcessorBase):
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None, validation_rules: Optional[dict] = None):
         model_data = None
-        # if model_metadata_file:
-        #     model_data = SbioModelData(model_metadata_file)
+        if model_metadata_file:
+            model_data = SbioModelDataForCsv(model_metadata_file)
         validator = CSVValidator(self.data_df, validation_rules, model_data)
         validator()
 

@@ -4,7 +4,7 @@ from abc import ABC
 class FileProcessorBase(ABC):
     pass
     # @abstractmethod
-    # def validate(self, model_data: SbioModelData):
+    # def validate(self, model_data: SbioModelDataForH5ad):
     #     pass
     #
     # @abstractmethod
