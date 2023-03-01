@@ -7,9 +7,9 @@ class ColumnValidationRule:
     def __init__(self, validation_rules: dict):
         self.name = validation_rules.get('name')
         self.allowed_types = validation_rules.get('typesAllowed')
-        self.required = validation_rules.get('required')
-        self.allow_missings = validation_rules.get('allowMissingss')
-        self.allow_duplicates = validation_rules.get('allowDuplicates')
+        self.required = validation_rules.get('required', True)
+        self.allow_missings = validation_rules.get('allowMissingss', True)
+        self.allow_duplicates = validation_rules.get('allowDuplicates', True)
         self.min = validation_rules.get('min')
         self.max = validation_rules.get('max')
         self.allowed_values = validation_rules.get('allowedValues')
@@ -17,10 +17,12 @@ class ColumnValidationRule:
 
 class TabularValidationRules:
     def __init__(self, validation_rules: dict):
-        column_rules = validation_rules.get('columns')
+        if not validation_rules:
+            validation_rules = {}
+        column_rules = validation_rules.get('columns', {})
         self.preserve_order = column_rules.get('preserveOrder')
-        self.column_names_required = column_rules.get('columnNamesRequired')
-        self.accept_other_columns = column_rules.get('allowOtherColumns')
+        self.column_names_required = column_rules.get('columnNamesRequired', True)
+        self.accept_other_columns = column_rules.get('allowOtherColumns', True)
         self.columns = [ColumnValidationRule(column_data) for column_data in column_rules.get('columnsList', [])]
 
 

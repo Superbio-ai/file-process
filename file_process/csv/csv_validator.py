@@ -1,5 +1,3 @@
-import json
-from io import BytesIO
 from typing import Optional
 
 from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError, \
@@ -13,7 +11,7 @@ class CSVValidator:
     def __init__(self, data_df: DataFrame, validation_rules: Optional[dict],
                  model_data: Optional[SbioModelDataForCsv] = None):
         self.data_df = data_df
-        self.rules = TabularValidationRules(validation_rules) if validation_rules else None
+        self.rules = TabularValidationRules(validation_rules)
         self.model_data = model_data
 
     def __call__(self):
@@ -29,6 +27,12 @@ class CSVValidator:
 
     def _validate_column_names(self):
         column_names = self.data_df.columns.values.tolist()
+        if self.rules.preserve_order:
+            # all columns are considered as required with this filter
+            required_columns = [col.name for col in self.rules.columns]
+            if required_columns != column_names:
+                raise CustomValidationException(f'This is the list of allowed columns in the allowed order: '
+                                                f'[{required_columns}]')
         for col in self.rules.columns:
             if col.required and col.name not in column_names:
                 all_required_columns = [col.name for col in self.rules.columns if col.required]
@@ -48,6 +52,7 @@ class CSVValidator:
 
     def _validate_column(self, name, data, rule):
         if rule.allowed_types:
+            # TODO add support for a list of types
             type_ = rule.allowed_types[0]
             try:
                 data.astype(type_)
@@ -77,8 +82,8 @@ class CSVValidator:
 
         model_target_names = self.model_data.target_names
         dataset_vars = set(self.data_df.columns)
-
         all_targets = self.model_data.metadata.get('require_all_targets', 'all')
+
         if all_targets == 'all':
             difference = model_target_names - dataset_vars
             if difference:

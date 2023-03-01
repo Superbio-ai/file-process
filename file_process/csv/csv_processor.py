@@ -27,9 +27,7 @@ class CSVFileProcessor(FileProcessorBase):
             raise DelimiterError() from exc
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None, validation_rules: Optional[dict] = None):
-        model_data = None
-        if model_metadata_file:
-            model_data = SbioModelDataForCsv(model_metadata_file)
+        model_data = SbioModelDataForCsv(model_metadata_file) if model_metadata_file else None
         validator = CSVValidator(self.data_df, validation_rules, model_data)
         validator()
 

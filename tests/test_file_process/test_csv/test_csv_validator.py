@@ -3,7 +3,8 @@ from io import BytesIO
 import pytest
 
 from file_process.csv.csv_processor import CSVFileProcessor
-from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError
+from file_process.csv.csv_validator import CSVValidator
+from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError, CustomValidationException
 from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
 
@@ -57,3 +58,49 @@ class TestCSVValidator:
         with pytest.raises(exception):
             _ = CSVFileProcessor(file_bytes_io).validate(metadata_file_bytes_io)
 
+    validation_dicts_for_valid_tests = [
+        {
+            "columnsList": [{"name": "sepal_length"}, {"name": "sepal_width"}, {"name": "petal_length"},
+                            {"name": "petal_width"}, {"name": "species"}]
+        }, {
+            "columnsList": [{"name": "sepal_width"}, {"name": "sepal_length"}, {"name": "petal_length"},
+                            {"name": "petal_width"}, {"name": "species"}],
+            "preserveOrder": False
+        }, {
+            "columnsList": [{"name": "sepal_length"}, {"name": "sepal_width"}, {"name": "petal_length"}],
+            "allowOtherColumns": True
+        }
+    ]
+
+    @pytest.mark.parametrize('validation_dict', validation_dicts_for_valid_tests)
+    def test_validate_columnns_valid(self, validation_dict):
+        file_bytes_io = get_remote_file_obj(self.original_data_path)
+        processor = CSVFileProcessor(file_bytes_io)
+
+        validation_rules = {"columns": validation_dict}
+        validator = CSVValidator(processor.data_df, validation_rules)
+        validator._validate_column_names()
+
+    validation_dicts_for_invalid_tests = [
+        {
+            "columnsList": [{"name": "some_name"}, {"name": "sepal_width"}, {"name": "petal_length"},
+                            {"name": "petal_width"}, {"name": "species"}]
+        }, {
+            "columnsList": [{"name": "sepal_width"}, {"name": "sepal_length"}, {"name": "petal_length"},
+                            {"name": "petal_width"}, {"name": "species"}],
+            "preserveOrder": True
+        }, {
+            "columnsList": [{"name": "sepal_length"}, {"name": "sepal_width"}, {"name": "petal_length"}],
+            "allowOtherColumns": False
+        }
+    ]
+
+    @pytest.mark.parametrize('validation_dict', validation_dicts_for_invalid_tests)
+    def test_validate_columnns_invalid(self, validation_dict):
+        file_bytes_io = get_remote_file_obj(self.original_data_path)
+        processor = CSVFileProcessor(file_bytes_io)
+
+        validation_rules = {"columns": validation_dict}
+        validator = CSVValidator(processor.data_df, validation_rules)
+        with pytest.raises(CustomValidationException):
+            validator._validate_column_names()
