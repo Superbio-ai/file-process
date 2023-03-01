@@ -70,7 +70,7 @@ class CSVValidator:
             if data.le(rule.min).any():
                 raise CustomValidationException(f'Min value in column {name} can be {rule.min}.')
         if rule.max is not None:
-            if data.le(rule.max).any():
+            if data.ge(rule.max).any():
                 raise CustomValidationException(f'Max value in column {name} can be {rule.max}.')
         if rule.allowed_values:
             if not data.isin(rule.allowed_values).all():

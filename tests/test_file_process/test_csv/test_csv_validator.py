@@ -106,6 +106,27 @@ class TestCSVValidator:
         with pytest.raises(CustomValidationException):
             validator._validate_column_names()
 
+    column_validation_data_for_valid_tests = [
+        ('sepal_width', {'allowedTypes': [float]}),
+        ('sepal_width', {'allowMissings': True}),
+        ('petal_length', {'allowDuplicates': True}),
+        ('petal_length', {'min': 0}),
+        ('petal_length', {'max': 2}),
+        ('species', {'allowedValues': ['setosa', 'letosa', 'detosa']}),
+    ]
+
+    @pytest.mark.parametrize('column_name, validation_dict', column_validation_data_for_valid_tests)
+    def test_validate_per_columnn_valid(self, column_name, validation_dict):
+        file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/invalid_files/invalid_data.csv')
+        processor = CSVFileProcessor(file_bytes_io)
+        validator = CSVValidator(processor.data_df, None)
+
+        for name, data in processor.data_df.iteritems():
+            if name != column_name:
+                continue
+            rule = ColumnValidationRule(validation_dict)
+            validator._validate_column(name, data, rule)
+
     column_validation_data_for_invalid_tests = [
         ('sepal_length', {'allowedTypes': [float]}),
         ('sepal_width', {'allowMissings': False}),
