@@ -73,7 +73,7 @@ class CSVValidator:
             if data.le(rule.max).any():
                 raise CustomValidationException(f'Max value in column {name} can be {rule.max}.')
         if rule.allowed_values:
-            if not data.eq(rule.allowed).all():
+            if not data.isin(rule.allowed_values).all():
                 raise CustomValidationException(f'For {name} column the list of allowed values is {rule.allowed_values}.')
 
     def model_file_validation(self):

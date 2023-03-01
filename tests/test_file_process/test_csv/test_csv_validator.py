@@ -4,6 +4,7 @@ import pytest
 
 from file_process.csv.csv_processor import CSVFileProcessor
 from file_process.csv.csv_validator import CSVValidator
+from file_process.csv.schemas import ColumnValidationRule
 from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError, CustomValidationException
 from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
@@ -104,3 +105,25 @@ class TestCSVValidator:
         validator = CSVValidator(processor.data_df, validation_rules)
         with pytest.raises(CustomValidationException):
             validator._validate_column_names()
+
+    column_validation_data_for_invalid_tests = [
+        ('sepal_length', {'allowedTypes': [float]}),
+        ('sepal_width', {'allowMissings': False}),
+        ('petal_length', {'allowDuplicates': False}),
+        ('petal_length', {'min': 1.5}),
+        ('petal_length', {'max': 1.5}),
+        ('species', {'allowedValues': ['setosa', 'letosa']}),
+    ]
+
+    @pytest.mark.parametrize('column_name, validation_dict', column_validation_data_for_invalid_tests)
+    def test_validate_per_columnn_invalid(self, column_name, validation_dict):
+        file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/invalid_files/invalid_data.csv')
+        processor = CSVFileProcessor(file_bytes_io)
+        validator = CSVValidator(processor.data_df, None)
+
+        for name, data in processor.data_df.iteritems():
+            if name != column_name:
+                continue
+            rule = ColumnValidationRule(validation_dict)
+            with pytest.raises(CustomValidationException):
+                validator._validate_column(name, data, rule)

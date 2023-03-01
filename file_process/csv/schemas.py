@@ -6,9 +6,9 @@ class ColumnValidationRule:
 
     def __init__(self, validation_rules: dict):
         self.name = validation_rules.get('name')
-        self.allowed_types = validation_rules.get('typesAllowed')
+        self.allowed_types = validation_rules.get('allowedTypes')
         self.required = validation_rules.get('required', True)
-        self.allow_missings = validation_rules.get('allowMissingss', True)
+        self.allow_missings = validation_rules.get('allowMissings', True)
         self.allow_duplicates = validation_rules.get('allowDuplicates', True)
         self.min = validation_rules.get('min')
         self.max = validation_rules.get('max')
