@@ -117,7 +117,7 @@ class TestCSVValidator:
 
     @pytest.mark.parametrize('column_name, validation_dict', column_validation_data_for_valid_tests)
     def test_validate_per_columnn_valid(self, column_name, validation_dict):
-        file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/invalid_files/invalid_data.csv')
+        file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/invalid_data.csv')
         processor = CSVFileProcessor(file_bytes_io)
         validator = CSVValidator(processor.data_df, None)
 
@@ -138,7 +138,7 @@ class TestCSVValidator:
 
     @pytest.mark.parametrize('column_name, validation_dict', column_validation_data_for_invalid_tests)
     def test_validate_per_columnn_invalid(self, column_name, validation_dict):
-        file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/invalid_files/invalid_data.csv')
+        file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/invalid_data.csv')
         processor = CSVFileProcessor(file_bytes_io)
         validator = CSVValidator(processor.data_df, None)
 
