@@ -1,9 +1,9 @@
 from typing import Optional
 
-from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError, \
-    CustomValidationException
 from pandas import DataFrame
 
+from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError, \
+    CustomValidationException
 from file_process.csv.schemas import TabularValidationRules, SbioModelDataForCsv
 
 
@@ -60,7 +60,7 @@ class CSVValidator:
             except Exception as e:
                 text = str(e)
                 raise CustomValidationException(f'All values under {name} column must be one of the following types: '
-                                                f'{rule.allowed_types}. {text.capitalize()}.')
+                                                f'{rule.allowed_types}. {text.capitalize()}.') from e
         if not rule.allow_missings:
             if data.isna().sum():
                 raise CustomValidationException(f'Column {name} has missings and it is not allowed.')
@@ -75,7 +75,8 @@ class CSVValidator:
                 raise CustomValidationException(f'Max value in column {name} can be {rule.max}.')
         if rule.allowed_values:
             if not data.isin(rule.allowed_values).all():
-                raise CustomValidationException(f'For {name} column the list of allowed values is {rule.allowed_values}.')
+                raise CustomValidationException(f'For {name} column the list of allowed values is '
+                                                f'{rule.allowed_values}.')
 
     def model_file_validation(self):
         if not self.model_data:
