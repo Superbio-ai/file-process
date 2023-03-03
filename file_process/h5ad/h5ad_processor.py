@@ -7,7 +7,7 @@ import pandas as pd
 from file_process.base import FileProcessorBase
 from file_process.constants import PREVIEW_ROWS_COUNT
 from file_process.h5ad.h5ad_validator import H5ADValidator
-from file_process.h5ad.schemas import SbioModelData
+from file_process.h5ad.schemas import SbioModelDataForH5ad
 
 
 class H5ADFileProcessor(FileProcessorBase):
@@ -15,10 +15,10 @@ class H5ADFileProcessor(FileProcessorBase):
     def __init__(self, file, **_):
         self.adata = anndata.read_h5ad(file)
 
-    def validate(self, model_metadata_file: Optional[BytesIO] = None):
+    def validate(self, model_metadata_file: Optional[BytesIO] = None, _: Optional[dict] = None):
         model_data = None
         if model_metadata_file:
-            model_data = SbioModelData(model_metadata_file)
+            model_data = SbioModelDataForH5ad(model_metadata_file)
         validator = H5ADValidator(self.adata, model_data, enable_warnings=False)
         validator()
 
