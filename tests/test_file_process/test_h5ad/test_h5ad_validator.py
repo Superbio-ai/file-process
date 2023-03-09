@@ -28,19 +28,31 @@ class TestH5ADValidator:
         with pytest.raises(ModelFileValidationVariablesError):
             _ = validator.model_file_validation()
 
-    def test_validate_target_names_present(self):
+    def test_validate_target_names_present_invalid(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/heart_atlas_no_columns.h5ad')
         processor = H5ADFileProcessor(file_bytes_io)
         validator = H5ADValidator(processor.adata)
         with pytest.raises(NoColumnsError):
             validator._validate_target_names_present()
 
-    def test_validate_check_x(self):
-        # file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/heart_atlas_no_x.h5ad')
-        processor = H5ADFileProcessor(f'{H5AD_INPUT_FILES_PATH}/heart_atlas_no_x.h5ad')
+    def test_validate_target_names_present_valid(self):
+        file_bytes_io = get_remote_file_obj(self.path)
+        processor = H5ADFileProcessor(file_bytes_io)
+        validator = H5ADValidator(processor.adata)
+        validator._validate_target_names_present()
+
+    def test_validate_check_x_invalid(self):
+        file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/heart_atlas_no_x.h5ad')
+        processor = H5ADFileProcessor(file_bytes_io)
         validator = H5ADValidator(processor.adata)
         with pytest.raises(NoXExpression):
             validator._check_x()
+
+    def test_validate_check_x_valid(self):
+        file_bytes_io = get_remote_file_obj(self.path)
+        processor = H5ADFileProcessor(file_bytes_io)
+        validator = H5ADValidator(processor.adata)
+        validator._check_x()
 
     @pytest.mark.skip(reason="Waiting for a testing file from Sion")
     def test_validate_check_not_normed(self):
@@ -50,9 +62,21 @@ class TestH5ADValidator:
         with pytest.raises(DataIsNormalized):
             validator._check_not_normed()
 
-    def test_validate_check_finite(self):
+    def test_validate_check_normed_valid(self):
+        file_bytes_io = get_remote_file_obj(self.path)
+        processor = H5ADFileProcessor(file_bytes_io)
+        validator = H5ADValidator(processor.adata)
+        validator._check_not_normed()
+
+    def test_validate_check_finite_invalid(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/heart_atlas_nan_inf.h5ad')
         processor = H5ADFileProcessor(file_bytes_io)
         validator = H5ADValidator(processor.adata)
         with pytest.raises(DataIsNotFinite):
             validator._check_finite()
+
+    def test_validate_check_finite_valid(self):
+        file_bytes_io = get_remote_file_obj(self.path)
+        processor = H5ADFileProcessor(file_bytes_io)
+        validator = H5ADValidator(processor.adata)
+        validator._check_finite()
