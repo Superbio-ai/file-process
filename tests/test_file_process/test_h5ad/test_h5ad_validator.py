@@ -54,9 +54,8 @@ class TestH5ADValidator:
         validator = H5ADValidator(processor.adata)
         validator._check_x()
 
-    @pytest.mark.skip(reason="Waiting for a testing file from Sion")
     def test_validate_check_not_normed(self):
-        file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/normed_data.h5ad')
+        file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/heart_sample_normalized.h5ad')
         processor = H5ADFileProcessor(file_bytes_io)
         validator = H5ADValidator(processor.adata)
         with pytest.raises(DataIsNormalized):
