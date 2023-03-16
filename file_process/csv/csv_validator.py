@@ -1,10 +1,10 @@
 from typing import Optional
 
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError, \
     CustomValidationException
-from file_process.csv.schemas import TabularValidationRules, SbioModelDataForCsv
+from file_process.csv.schemas import TabularValidationRules, SbioModelDataForCsv, ColumnValidationRule
 
 
 class CSVValidator:
@@ -49,9 +49,9 @@ class CSVValidator:
         rules = {c.name: c for c in self.rules.columns}
         for name, data in self.data_df.iteritems():
             if name in rules:
-                self._validate_column(name, data, rules[name])
+                self._validate_column(str(name), data, rules[name])
 
-    def _validate_column(self, name, data, rule):
+    def _validate_column(self, name: str, data, rule: ColumnValidationRule):
         if rule.allowed_types:
             # TODO add support for a list of types
             type_ = rule.allowed_types[0]

@@ -3,6 +3,7 @@ from io import BytesIO
 from typing import List
 
 
+NAME_STR = 'name'
 ALLOWED_TYPES_STR = 'allowedTypes'
 ALLOWED_VALUES_STR = 'allowedValues'
 REQUIRED_STR = 'required'
@@ -28,7 +29,7 @@ class ValidationRuleError:
 class ColumnValidationRule:
 
     def __init__(self, validation_rules: dict):
-        self.name = validation_rules.get('name')
+        self.name = validation_rules.get(NAME_STR)
         self.allowed_types = validation_rules.get(ALLOWED_TYPES_STR)
         self.required = validation_rules.get(REQUIRED_STR, True)
         self.allow_missings = validation_rules.get('allowMissings', True)
@@ -39,6 +40,11 @@ class ColumnValidationRule:
 
     def validate_self(self, index: int):
         errors = []
+        if not self.name:
+            errors.append(ValidationRuleError(
+                [f'{COLUMNS_LIST_STR}[{index}].{NAME_STR}'],
+                'Missing field'
+            ))
         if len(self.allowed_types) > 1:
             errors.append(ValidationRuleError(
                 [f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_TYPES_STR}'],
