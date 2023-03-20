@@ -22,8 +22,8 @@ class ValidationRuleError:
         self.keys = [f'{self.default_path}.{key}' for key in keys]
         self.message = message
 
-    def to_str(self):
-        return {}
+    def to_dict(self):
+        return self.__dict__
 
 
 class ColumnValidationRule:
@@ -50,7 +50,7 @@ class ColumnValidationRule:
                 [f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_TYPES_STR}'],
                 'We only support one allowed type at the moment (notice that float includes int).'
             ))
-        if self.min > self.max:
+        if self.min is not None and self.max is not None and self.min > self.max:
             errors.append(ValidationRuleError(
                     [f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}', f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
                     'Min cannot be bigger than max.'
@@ -87,7 +87,7 @@ class TabularValidationRules:
         if self.accept_other_columns and self.preserve_order:
             errors.append(ValidationRuleError(
                 [PRESERVE_ORDER_STR, ALLOW_OTHER_COLUMNS_STR],
-                f'{PRESERVE_ORDER_STR} and {ALLOW_OTHER_COLUMNS_STR} cannot be true at the same time'
+                f'{PRESERVE_ORDER_STR} and {ALLOW_OTHER_COLUMNS_STR} cannot be true at the same time '
                 f'because when we validate {PRESERVE_ORDER_STR} we get the list of all allowed columns '
                 f'and compare it with the list of all columns in the file.'
             ))
@@ -95,7 +95,7 @@ class TabularValidationRules:
         for index, column in enumerate(self.columns):
             if self.preserve_order and not column.required:
                 errors.append(ValidationRuleError(
-                    [{PRESERVE_ORDER_STR}, f'{COLUMNS_LIST_STR}[{index}].{REQUIRED_STR}'],
+                    [PRESERVE_ORDER_STR, f'{COLUMNS_LIST_STR}[{index}].{REQUIRED_STR}'],
                     f'If {PRESERVE_ORDER_STR} is true, then all columns must be required.'
                 ))
             errors += column.validate_self(index)

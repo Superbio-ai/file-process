@@ -36,7 +36,7 @@ class NoColumnsError(BaseError):
     message = 'No columns in file.'
 
 
-class CustomValidationException(BaseError):
+class FileProcessValidationException(BaseError):
     def __init__(self, message: str):
         self.message = message
 

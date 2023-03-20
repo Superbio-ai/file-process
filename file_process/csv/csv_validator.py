@@ -3,7 +3,7 @@ from typing import Optional
 from pandas import DataFrame, Series
 
 from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError, \
-    CustomValidationException
+    FileProcessValidationException
 from file_process.csv.schemas import TabularValidationRules, SbioModelDataForCsv, ColumnValidationRule
 
 
@@ -31,18 +31,18 @@ class CSVValidator:
             # all columns are considered as required with this filter
             required_columns = [col.name for col in self.rules.columns]
             if required_columns != column_names:
-                raise CustomValidationException(f'This is the list of allowed columns in the allowed order: '
+                raise FileProcessValidationException(f'This is the list of allowed columns in the allowed order: '
                                                 f'[{required_columns}]')
         for col in self.rules.columns:
             if col.required and col.name not in column_names:
                 all_required_columns = [col.name for col in self.rules.columns if col.required]
-                raise CustomValidationException(f'Missing {col.name} column in the file. '
+                raise FileProcessValidationException(f'Missing {col.name} column in the file. '
                                                 f'List of required columns: [{all_required_columns}]')
         if not self.rules.accept_other_columns:
             allowed_column_names = [col.name for col in self.rules.columns]
             for col in column_names:
                 if col not in allowed_column_names:
-                    raise CustomValidationException(f'Invalid column: {col}. '
+                    raise FileProcessValidationException(f'Invalid column: {col}. '
                                                     f'The list of allowed column names: {allowed_column_names}')
 
     def _validate_columns(self):
@@ -59,23 +59,23 @@ class CSVValidator:
                 data.astype(type_)
             except Exception as e:
                 text = str(e)
-                raise CustomValidationException(f'All values under {name} column must be one of the following types: '
+                raise FileProcessValidationException(f'All values under {name} column must be one of the following types: '
                                                 f'{rule.allowed_types}. {text.capitalize()}.') from e
         if not rule.allow_missings:
             if data.isna().sum():
-                raise CustomValidationException(f'Column {name} has missings and it is not allowed.')
+                raise FileProcessValidationException(f'Column {name} has missings and it is not allowed.')
         if not rule.allow_duplicates:
             if data.duplicated().any():
-                raise CustomValidationException(f'Column {name} has duplicates and it is not allowed.')
+                raise FileProcessValidationException(f'Column {name} has duplicates and it is not allowed.')
         if rule.min is not None:
             if data.le(rule.min).any():
-                raise CustomValidationException(f'Min value in column {name} can be {rule.min}.')
+                raise FileProcessValidationException(f'Min value in column {name} can be {rule.min}.')
         if rule.max is not None:
             if data.ge(rule.max).any():
-                raise CustomValidationException(f'Max value in column {name} can be {rule.max}.')
+                raise FileProcessValidationException(f'Max value in column {name} can be {rule.max}.')
         if rule.allowed_values:
             if not data.isin(rule.allowed_values).all():
-                raise CustomValidationException(f'For {name} column the list of allowed values is '
+                raise FileProcessValidationException(f'For {name} column the list of allowed values is '
                                                 f'{rule.allowed_values}.')
 
     def model_file_validation(self):
