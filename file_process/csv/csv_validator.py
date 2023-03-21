@@ -4,7 +4,7 @@ from pandas import DataFrame
 
 from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError, \
     CustomValidationException
-from file_process.csv.schemas import TabularValidationRules, SbioModelDataForCsv
+from file_process.csv.schemas import TabularValidationRules, SbioModelDataForCsv, ColumnValidationRule
 
 
 class CSVValidator:
@@ -49,9 +49,9 @@ class CSVValidator:
         rules = {c.name: c for c in self.rules.columns}
         for name, data in self.data_df.iteritems():
             if name in rules:
-                self._validate_column(name, data, rules[name])
+                self._validate_column(str(name), data, rules[name])
 
-    def _validate_column(self, name, data, rule):
+    def _validate_column(self, name: str, data, rule: ColumnValidationRule):
         if rule.allowed_types:
             # TODO add support for a list of types
             type_ = rule.allowed_types[0]
@@ -59,8 +59,8 @@ class CSVValidator:
                 data.astype(type_)
             except Exception as e:
                 text = str(e)
-                raise CustomValidationException(f'All values under {name} column must be one of the following types: '
-                                                f'{rule.allowed_types}. {text.capitalize()}.') from e
+                raise CustomValidationException(f'All values under {name} column must be one of the following '
+                                                f'types: {rule.allowed_types}. {text.capitalize()}.') from e
         if not rule.allow_missings:
             if data.isna().sum():
                 raise CustomValidationException(f'Column {name} has missings and it is not allowed.')
