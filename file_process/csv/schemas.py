@@ -40,7 +40,7 @@ class ColumnValidationRule:
         self.max = validation_rules.get(MAX_STR)
         self.allowed_values = validation_rules.get(ALLOWED_VALUES_STR)
 
-    def validate_self(self, index: int):
+    def validate_self(self, index: int):  # pylint: disable=too-many-branches
         errors = []
         for key in self._validation_rules.keys():
             if key not in [NAME_STR, ALLOWED_TYPES_STR, REQUIRED_STR, 'allowMissings', 'allowDuplicates', MIN_STR,
@@ -60,8 +60,8 @@ class ColumnValidationRule:
             try:
                 if self.min > self.max:
                     errors.append(ValidationRuleError(
-                            [f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}', f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
-                            'Min cannot be bigger than max.'
+                        [f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}', f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
+                        'Min cannot be bigger than max.'
                     ))
             except TypeError as e:
                 errors.append(ValidationRuleError(
@@ -71,19 +71,19 @@ class ColumnValidationRule:
         if self.min is not None:
             try:
                 self._validate_type(self.min)
-            except ValueError as e:
+            except ValueError:
                 errors.append(ValidationRuleError([f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}'],
                                                   'Min value must be one of allowed types.'))
         if self.max is not None:
             try:
                 self._validate_type(self.max)
-            except ValueError as e:
+            except ValueError:
                 errors.append(ValidationRuleError([f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
                                                   'Max value must be one of allowed types.'))
         if self.allowed_types and len(self.allowed_types) == 1 and self.allowed_values:
             try:
                 self._validate_type(self.allowed_values)
-            except ValueError as e:
+            except ValueError:
                 errors.append(ValidationRuleError(
                     [f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_VALUES_STR}',
                      f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_TYPES_STR}'],

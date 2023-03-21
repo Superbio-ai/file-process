@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pandas import DataFrame, Series
+from pandas import DataFrame
 
 from file_process.exceptions import NotAllTargetsError, NotSomeTargetsError, ModelFileValidationVariablesError, \
     FileProcessValidationException
@@ -32,18 +32,18 @@ class CSVValidator:
             required_columns = [col.name for col in self.rules.columns]
             if required_columns != column_names:
                 raise FileProcessValidationException(f'This is the list of allowed columns in the allowed order: '
-                                                f'[{required_columns}]')
+                                                     f'[{required_columns}]')
         for col in self.rules.columns:
             if col.required and col.name not in column_names:
                 all_required_columns = [col.name for col in self.rules.columns if col.required]
                 raise FileProcessValidationException(f'Missing {col.name} column in the file. '
-                                                f'List of required columns: [{all_required_columns}]')
+                                                     f'List of required columns: [{all_required_columns}]')
         if not self.rules.accept_other_columns:
             allowed_column_names = [col.name for col in self.rules.columns]
             for col in column_names:
                 if col not in allowed_column_names:
                     raise FileProcessValidationException(f'Invalid column: {col}. '
-                                                    f'The list of allowed column names: {allowed_column_names}')
+                                                         f'The list of allowed column names: {allowed_column_names}')
 
     def _validate_columns(self):
         rules = {c.name: c for c in self.rules.columns}
@@ -51,7 +51,7 @@ class CSVValidator:
             if name in rules:
                 self._validate_column(str(name), data, rules[name])
 
-    def _validate_column(self, name: str, data, rule: ColumnValidationRule):
+    def _validate_column(self, name: str, data, rule: ColumnValidationRule):  # pylint: disable=no-self-use
         if rule.allowed_types:
             # TODO add support for a list of types
             type_ = rule.allowed_types[0]
@@ -59,8 +59,8 @@ class CSVValidator:
                 data.astype(type_)
             except Exception as e:
                 text = str(e)
-                raise FileProcessValidationException(f'All values under {name} column must be one of the following types: '
-                                                     f'{rule.allowed_types}. {text.capitalize()}.') from e
+                raise FileProcessValidationException(f'All values under {name} column must be one of the following '
+                                                     f'types: {rule.allowed_types}. {text.capitalize()}.') from e
         if not rule.allow_missings:
             if data.isna().sum():
                 raise FileProcessValidationException(f'Column {name} has missings and it is not allowed.')

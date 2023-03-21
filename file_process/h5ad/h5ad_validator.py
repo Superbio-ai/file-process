@@ -84,6 +84,6 @@ class H5ADValidator:
         if not is_finite:
             raise DataIsNotFinite
 
-    def _get_encoding_version_warnings(self):
+    def _get_encoding_version_warnings(self):  # pylint: disable=no-self-use
         # TODO check
         return ["The h5ad artifact was generated with an AnnData version different from 0.8.0."]
