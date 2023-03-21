@@ -2,8 +2,6 @@ import json
 from io import BytesIO
 from typing import List
 
-import pandas as pd
-
 NAME_STR = 'name'
 ALLOWED_TYPES_STR = 'allowedTypes'
 ALLOWED_VALUES_STR = 'allowedValues'
