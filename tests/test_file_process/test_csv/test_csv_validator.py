@@ -6,7 +6,7 @@ from file_process.csv.csv_processor import CSVFileProcessor
 from file_process.csv.csv_validator import CSVValidator
 from file_process.csv.schemas import ColumnValidationRule
 from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError, \
-    FileProcessValidationException
+    CustomValidationException
 from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
 
@@ -104,7 +104,7 @@ class TestCSVValidator:
 
         validation_rules = {"columns": validation_dict}
         validator = CSVValidator(processor.data_df, validation_rules)
-        with pytest.raises(FileProcessValidationException):
+        with pytest.raises(CustomValidationException):
             validator._validate_column_names()
 
     column_validation_data_for_valid_tests = [
@@ -147,5 +147,5 @@ class TestCSVValidator:
             if name != column_name:
                 continue
             rule = ColumnValidationRule(validation_dict)
-            with pytest.raises(FileProcessValidationException):
+            with pytest.raises(CustomValidationException):
                 validator._validate_column(name, data, rule)
