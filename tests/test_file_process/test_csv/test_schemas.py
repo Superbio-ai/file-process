@@ -28,6 +28,11 @@ class TestSchemas:
                 {'name': 'Samantha', 'required': False, 'allowedTypes': ['float'], 'allowedValues': [1, 2, 3]},
             ],
             'preserveOrder': False
+        },
+        {
+            'columnsList': [
+                {'name': 'Samantha'},
+            ]
         }
     ]
 
