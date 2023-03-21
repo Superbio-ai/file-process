@@ -2,6 +2,8 @@ import json
 from io import BytesIO
 from typing import List
 
+import pandas as pd
+
 NAME_STR = 'name'
 ALLOWED_TYPES_STR = 'allowedTypes'
 ALLOWED_VALUES_STR = 'allowedValues'
@@ -68,13 +70,13 @@ class ColumnValidationRule:
         if self.max is not None:
             try:
                 self._validate_type(self.max)
-            except Exception as e:
+            except ValueError as e:
                 errors.append(ValidationRuleError([f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
                                                   'Max value must be one of allowed types.'))
         if self.allowed_types and len(self.allowed_types) == 1 and self.allowed_values:
             try:
                 self._validate_type(self.allowed_values)
-            except Exception as e:
+            except ValueError as e:
                 errors.append(ValidationRuleError(
                     [f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_VALUES_STR}',
                      f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_TYPES_STR}'],
@@ -84,11 +86,8 @@ class ColumnValidationRule:
 
     def _validate_type(self, value):
         fixed_value = [value] if not isinstance(value, list) else value
-        for v in fixed_value:
-            string = f"isinstance({v}, {self.allowed_types[0]})"
-            res = eval(string)
-            if not res:
-                raise Exception
+        values_df = pd.DataFrame(fixed_value)
+        values_df.astype(self.allowed_types[0], errors='raise')
 
 
 class TabularValidationRules:
