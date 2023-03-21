@@ -4,19 +4,37 @@ from file_process.csv.schemas import TabularValidationRules
 
 
 class TestSchemas:
-    def test_validations(self):
+    valid_configs = [
+        {
+            'columnsList': [
+                {'name': 'Samantha', 'required': True, 'allowedTypes': ['str'],
+                 'allowedValues': ['mac', 'and', 'cheese'], 'allowMissings': True, 'allowDuplicates': True},
+                {'name': 'Karrie', 'required': True, 'allowedTypes': ['int'],
+                 'allowedValues': [1, 2, 3], 'allowMissings': True, 'allowDuplicates': True}
+            ],
+            'columnNamesRequired': True,
+            'allowOtherColumns': True,
+            'preserveOrder': False
+        },
+        {
+            'columnsList': [
+                {'name': 'Samantha', 'required': True, 'allowedTypes': ['str'], 'allowedValues': ['mac']},
+            ],
+            'allowOtherColumns': False,
+            'preserveOrder': True
+        },
+        {
+            'columnsList': [
+                {'name': 'Samantha', 'required': False, 'allowedTypes': ['float'], 'allowedValues': [1, 2, 3]},
+            ],
+            'preserveOrder': False
+        }
+    ]
+
+    @pytest.mark.parametrize('valid_config', valid_configs)
+    def test_validations(self, valid_config):
         valid_config = {
-            'columns': {
-                'columnsList': [
-                    {'name': 'Samantha', 'required': True, 'allowedTypes': ['str'],
-                     'allowedValues': ['mac', 'and', 'cheese'], 'allowMissings': True, 'allowDuplicates': True},
-                    {'name': 'Karrie', 'required': True, 'allowedTypes': ['int'],
-                     'allowedValues': [1, 2, 3], 'allowMissings': True, 'allowDuplicates': True}
-                ],
-                'columnNamesRequired': True,
-                'allowOtherColumns': True,
-                'preserveOrder': False
-            }
+            'columns': valid_config
         }
 
         validation_rules = TabularValidationRules(valid_config)
@@ -24,6 +42,7 @@ class TestSchemas:
 
     invalid_columns = [
         {'name': 'test', 'allowedTypes': ['int'], 'allowedValues': ['letosa', 'detosa']},  # wrong type of allowed values
+        {'name': 'test', 'alllowedTypes': ['int'], 'allowedValues': ['letosa', 'detosa']},  # typo in allowedTypes
         {'allowedTypes': ['str'], 'allowedValues': ['strings']},  # no name
         {'name': '', 'allowedTypes': ['str'], 'allowedValues': ['strings']},  # empty name
         {'name': 'test', 'allowedTypes': ['str', 'int'], 'allowedValues': ['strings']},  # 2 allowed types

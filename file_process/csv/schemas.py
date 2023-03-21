@@ -51,7 +51,7 @@ class ColumnValidationRule:
                 [f'{COLUMNS_LIST_STR}[{index}].{NAME_STR}'],
                 'Missing field'
             ))
-        if len(self.allowed_types) > 1:
+        if self.allowed_types and len(self.allowed_types) > 1:
             errors.append(ValidationRuleError(
                 [f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_TYPES_STR}'],
                 'We only support one allowed type at the moment (notice that float includes int).'
@@ -92,6 +92,8 @@ class ColumnValidationRule:
         return errors
 
     def _validate_type(self, value):
+        if not self.allowed_types:
+            return
         fixed_value = [value] if not isinstance(value, list) else value
         values_df = pd.DataFrame(fixed_value)
         values_df.astype(self.allowed_types[0], errors='raise')
