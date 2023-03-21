@@ -5,7 +5,8 @@ import pytest
 from file_process.csv.csv_processor import CSVFileProcessor
 from file_process.csv.csv_validator import CSVValidator
 from file_process.csv.schemas import ColumnValidationRule
-from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError, FileProcessValidationException
+from file_process.exceptions import NotAllTargetsError, ModelFileValidationVariablesError, \
+    FileProcessValidationException
 from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
 

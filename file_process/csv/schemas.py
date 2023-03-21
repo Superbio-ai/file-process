@@ -2,6 +2,7 @@ import json
 from io import BytesIO
 from typing import List
 
+import pandas as pd
 
 NAME_STR = 'name'
 ALLOWED_TYPES_STR = 'allowedTypes'
@@ -29,6 +30,7 @@ class ValidationRuleError:
 class ColumnValidationRule:
 
     def __init__(self, validation_rules: dict):
+        self._validation_rules = validation_rules
         self.name = validation_rules.get(NAME_STR)
         self.allowed_types = validation_rules.get(ALLOWED_TYPES_STR)
         self.required = validation_rules.get(REQUIRED_STR, True)
@@ -40,6 +42,10 @@ class ColumnValidationRule:
 
     def validate_self(self, index: int):
         errors = []
+        for key in self._validation_rules.keys():
+            if key not in [NAME_STR, ALLOWED_TYPES_STR, REQUIRED_STR, 'allowMissings', 'allowDuplicates', MIN_STR,
+                           MAX_STR, ALLOWED_VALUES_STR]:
+                errors.append(ValidationRuleError([f'{COLUMNS_LIST_STR}[{index}].{key}'], 'Invalid key'))
         if not self.name:
             errors.append(ValidationRuleError(
                 [f'{COLUMNS_LIST_STR}[{index}].{NAME_STR}'],
@@ -55,16 +61,36 @@ class ColumnValidationRule:
                     [f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}', f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
                     'Min cannot be bigger than max.'
             ))
-        if self.allowed_types and self.allowed_values:
-            type_ = self.allowed_types
-            for val_index, value in enumerate(self.allowed_values):
-                if not isinstance(value, type_):
-                    errors.append(ValidationRuleError(
-                        [f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_VALUES_STR}[{val_index}]',
-                         f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_TYPES_STR}'],
-                        'All allowed values must be one of allowed type.'
-                    ))
+        if self.min is not None:
+            try:
+                self._validate_type(self.min)
+            except Exception as e:
+                errors.append(ValidationRuleError([f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}'],
+                                                  'Min value must be one of allowed types.'))
+        if self.max is not None:
+            try:
+                self._validate_type(self.max)
+            except Exception as e:
+                errors.append(ValidationRuleError([f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
+                                                  'Max value must be one of allowed types.'))
+        if self.allowed_types and len(self.allowed_types) == 1 and self.allowed_values:
+            try:
+                self._validate_type(self.allowed_values)
+            except Exception as e:
+                errors.append(ValidationRuleError(
+                    [f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_VALUES_STR}',
+                     f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_TYPES_STR}'],
+                    'All allowed values must be one of allowed type.'
+                ))
         return errors
+
+    def _validate_type(self, value):
+        fixed_value = [value] if not isinstance(value, list) else value
+        for v in fixed_value:
+            string = f"isinstance({v}, {self.allowed_types[0]})"
+            res = eval(string)
+            if not res:
+                raise Exception
 
 
 class TabularValidationRules:
@@ -72,6 +98,7 @@ class TabularValidationRules:
         if not validation_rules:
             validation_rules = {}
         column_rules = validation_rules.get('columns', {})
+        self._column_rules = column_rules
         self.preserve_order = column_rules.get(PRESERVE_ORDER_STR)
         self.column_names_required = column_rules.get(COLUMN_NAMES_REQUIRED, True)
         self.accept_other_columns = column_rules.get(ALLOW_OTHER_COLUMNS_STR, True)
@@ -79,6 +106,9 @@ class TabularValidationRules:
 
     def validate_self(self) -> List[ValidationRuleError]:
         errors = []
+        for key in self._column_rules.keys():
+            if key not in [PRESERVE_ORDER_STR, COLUMN_NAMES_REQUIRED, ALLOW_OTHER_COLUMNS_STR, 'columnsList']:
+                errors.append(ValidationRuleError([key], 'Invalid key'))
         if not self.column_names_required:
             errors.append(ValidationRuleError(
                 [COLUMN_NAMES_REQUIRED],

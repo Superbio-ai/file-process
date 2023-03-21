@@ -60,7 +60,7 @@ class CSVValidator:
             except Exception as e:
                 text = str(e)
                 raise FileProcessValidationException(f'All values under {name} column must be one of the following types: '
-                                                f'{rule.allowed_types}. {text.capitalize()}.') from e
+                                                     f'{rule.allowed_types}. {text.capitalize()}.') from e
         if not rule.allow_missings:
             if data.isna().sum():
                 raise FileProcessValidationException(f'Column {name} has missings and it is not allowed.')
@@ -76,7 +76,7 @@ class CSVValidator:
         if rule.allowed_values:
             if not data.isin(rule.allowed_values).all():
                 raise FileProcessValidationException(f'For {name} column the list of allowed values is '
-                                                f'{rule.allowed_values}.')
+                                                     f'{rule.allowed_values}.')
 
     def model_file_validation(self):
         if not self.model_data:
