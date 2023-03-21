@@ -123,9 +123,10 @@ class TabularValidationRules:
         if self.accept_other_columns and self.preserve_order:
             errors.append(ValidationRuleError(
                 [PRESERVE_ORDER_STR, ALLOW_OTHER_COLUMNS_STR],
-                f'{PRESERVE_ORDER_STR} and {ALLOW_OTHER_COLUMNS_STR} cannot be true at the same time '
-                f'because when we validate {PRESERVE_ORDER_STR} we get the list of all allowed columns '
-                f'and compare it with the list of all columns in the file.'
+                f'If you want to set preserveOrder to true, you need to explicitly set {ALLOW_OTHER_COLUMNS_STR} '
+                f'to false. When we validate {PRESERVE_ORDER_STR} we get the list of all allowed columns '
+                f'and compare it with the list of all columns in the file, so if there will be other columns, '
+                f'the validation will fail.'
             ))
 
         for index, column in enumerate(self.columns):
