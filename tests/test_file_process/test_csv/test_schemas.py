@@ -23,14 +23,14 @@ class TestSchemas:
         validation_rules.validate_self()
 
     invalid_columns = [
-        # {'name': 'test', 'allowedTypes': ['int'], 'allowedValues': ['letosa', 'detosa']},  # wrong type of allowed values
-        # {'allowedTypes': ['str'], 'allowedValues': ['strings']},  # no name
-        # {'name': '', 'allowedTypes': ['str'], 'allowedValues': ['strings']},  # empty name
-        # {'name': 'test', 'allowedTypes': ['str', 'int'], 'allowedValues': ['strings']},  # 2 allowed types
+        {'name': 'test', 'allowedTypes': ['int'], 'allowedValues': ['letosa', 'detosa']},  # wrong type of allowed values
+        {'allowedTypes': ['str'], 'allowedValues': ['strings']},  # no name
+        {'name': '', 'allowedTypes': ['str'], 'allowedValues': ['strings']},  # empty name
+        {'name': 'test', 'allowedTypes': ['str', 'int'], 'allowedValues': ['strings']},  # 2 allowed types
         {'name': 'test', 'allowedTypes': ['int'], 'min': 'letosa', 'max': 10},  # wrong type of min
-        # {'name': 'test', 'allowedTypes': ['int'], 'max': 'detosa'},  # wrong type of max
-        # {'name': 'test', 'allowedTypes': ['int'], 'min': 10, 'max': 0},  # min bugger than max
-        # {'name': 'test', 'allowedTypes': ['int'], 'max': 0, 'min': 10},  # min bigger than max - different fields order
+        {'name': 'test', 'allowedTypes': ['int'], 'max': 'detosa'},  # wrong type of max
+        {'name': 'test', 'allowedTypes': ['int'], 'min': 10, 'max': 0},  # min bugger than max
+        {'name': 'test', 'allowedTypes': ['int'], 'max': 0, 'min': 10},  # min bigger than max - different fields order
     ]
 
     @pytest.mark.parametrize('invalid_column', invalid_columns)
