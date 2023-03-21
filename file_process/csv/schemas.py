@@ -56,15 +56,22 @@ class ColumnValidationRule:
                 [f'{COLUMNS_LIST_STR}[{index}].{ALLOWED_TYPES_STR}'],
                 'We only support one allowed type at the moment (notice that float includes int).'
             ))
-        if self.min is not None and self.max is not None and self.min > self.max:
-            errors.append(ValidationRuleError(
+        if self.min is not None and self.max is not None:
+            try:
+                if self.min > self.max:
+                    errors.append(ValidationRuleError(
+                            [f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}', f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
+                            'Min cannot be bigger than max.'
+                    ))
+            except TypeError as e:
+                errors.append(ValidationRuleError(
                     [f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}', f'{COLUMNS_LIST_STR}[{index}].{MAX_STR}'],
-                    'Min cannot be bigger than max.'
-            ))
+                    f'Impossible to do comparison between min and max. Error: {e}'
+                ))
         if self.min is not None:
             try:
                 self._validate_type(self.min)
-            except Exception as e:
+            except ValueError as e:
                 errors.append(ValidationRuleError([f'{COLUMNS_LIST_STR}[{index}].{MIN_STR}'],
                                                   'Min value must be one of allowed types.'))
         if self.max is not None:
