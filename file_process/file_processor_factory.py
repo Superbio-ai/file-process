@@ -8,7 +8,9 @@ from file_process.h5ad.h5ad_processor import H5ADFileProcessor
 class FileProcessFactory:  # pylint: disable=too-few-public-methods
     EXTENSIONS_MAP = {
         '.h5ad': H5ADFileProcessor,
-        '.csv': CSVFileProcessor
+        '.csv': CSVFileProcessor,
+        '.txt': CSVFileProcessor,
+        '.tsv': CSVFileProcessor,
     }
 
     @classmethod
