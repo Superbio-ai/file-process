@@ -9,16 +9,29 @@ class TestH5ADFileProcessor:
 
     def test_read_remote_file(self):
         file_bytes_io = get_remote_file_obj(self.path)
-        res = H5ADFileProcessor(file_bytes_io)
+        ext = self.path.split('.')[-1]
+        res = H5ADFileProcessor(file_bytes_io, ext)
         assert res
 
     def test_read_file_from_path(self):
-        res = H5ADFileProcessor(self.path)
+        ext = self.path.split('.')[-1]
+        res = H5ADFileProcessor(self.path, ext)
+        assert res
+    
+    def test_read_h5_file(self):
+        file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/worm_neuron_cell.h5')
+        res = H5ADFileProcessor(file_bytes_io, ext= 'h5')
+        assert res
+    
+    def test_read_Seurat_file(self):
+        file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/liver_sample.h5Seurat')
+        res = H5ADFileProcessor(file_bytes_io, ext= 'h5Seurat')
         assert res
 
     def test_get_preview(self):
         file_bytes_io = get_remote_file_obj(self.path)
-        target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io).get_preview()
+        ext = self.path.split('.')[-1]
+        target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io, ext).get_preview()
         assert target_names == ['NRP', 'age_group', 'cell_source', 'cell_type', 'donor', 'gender', 'n_counts',
                                 'n_genes', 'percent_mito', 'percent_ribo', 'region', 'sample',  'scrublet_score',
                                 'source', 'type', 'version', 'cell_states', 'Used', '_scvi_batch', '_scvi_labels']
@@ -49,13 +62,13 @@ class TestH5ADFileProcessor:
 
     def test_get_preview_file_with_nans(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/follicular_sample.h5ad')
-        _, obs_preview, _ = H5ADFileProcessor(file_bytes_io).get_preview()
+        _, obs_preview, _ = H5ADFileProcessor(file_bytes_io, ext = 'h5ad').get_preview()
         for item in obs_preview:
             for value in item.values():
                 assert value is not nan
 
     def test_get_preview_file_no_rows(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/liver_sample.h5ad')
-        target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io).get_preview()
+        target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io, ext = 'h5ad').get_preview()
         assert obs_preview != []
         assert var_preview == []
