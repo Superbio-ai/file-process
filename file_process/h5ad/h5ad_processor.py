@@ -12,32 +12,8 @@ from file_process.h5ad.h5ad_validator import H5ADValidator
 from file_process.h5ad.schemas import SbioModelDataForH5ad
 
 
-def _h5_process(file):
-
-    data_mat = h5py.File(file, 'r')
-    main_df = np.array(data_mat['X'])
-    if 'Y' in data_mat:
-        obs = np.array(data_mat['Y'])
-    else:
-        obs = None
-    data_mat.close()
-
-    # preprocessing scRNA-seq read counts matrix
-    adata = anndata.AnnData(main_df)
-    if obs is not None:
-        adata.obs['Group'] = obs
-
-    return adata
-
-
-class H5ADFileProcessor(FileProcessorBase):
-
-    def __init__(self, file, ext, **_):
-        if ext == 'h5':
-            self.adata = _h5_process(file)
-        elif ext in ['h5ad','h5Seurat']:
-            self.adata = anndata.read_h5ad(file)
-
+class H5GenericProcessor(FileProcessorBase):
+    
     def validate(self, model_metadata_file: Optional[BytesIO] = None, _: Optional[dict] = None):
         model_data = None
         if model_metadata_file:
@@ -72,3 +48,28 @@ class H5ADFileProcessor(FileProcessorBase):
         for index, value in enumerate(indices):
             rows[index]['Feature Name'] = value
         return rows
+
+    
+class H5FileProcessor(H5GenericProcessor):
+
+    def __init__(self, file, **_):
+        data_mat = h5py.File(file, 'r')
+        main_df = np.array(data_mat['X'])
+        if 'Y' in data_mat:
+            obs = np.array(data_mat['Y'])
+        else:
+            obs = None
+        data_mat.close()
+
+        # preprocessing scRNA-seq read counts matrix
+        adata = anndata.AnnData(main_df)
+        if obs is not None:
+            adata.obs['Group'] = obs
+
+        self.adata = adata
+
+
+class H5ADFileProcessor(H5GenericProcessor):
+    
+    def __init__(self, file, **_):
+        self.adata = anndata.read_h5ad(file)

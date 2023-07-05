@@ -1,6 +1,6 @@
 from numpy import nan
 
-from file_process.h5ad.h5ad_processor import H5ADFileProcessor
+from file_process.h5ad.h5ad_processor import H5ADFileProcessor, H5FileProcessor
 from tests.test_file_process import H5AD_INPUT_FILES_PATH, get_remote_file_obj
 
 
@@ -9,23 +9,21 @@ class TestH5ADFileProcessor:
 
     def test_read_remote_file(self):
         file_bytes_io = get_remote_file_obj(self.path)
-        ext = self.path.split('.')[-1]
-        res = H5ADFileProcessor(file_bytes_io, ext)
+        res = H5ADFileProcessor(file_bytes_io)
         assert res
 
     def test_read_file_from_path(self):
-        ext = self.path.split('.')[-1]
-        res = H5ADFileProcessor(self.path, ext)
+        res = H5ADFileProcessor(self.path)
         assert res
     
     def test_read_h5_file(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/worm_neuron_cell.h5')
-        res = H5ADFileProcessor(file_bytes_io, ext= 'h5')
+        res = H5FileProcessor(file_bytes_io)
         assert res
     
     def test_read_Seurat_file(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/liver_sample.h5Seurat')
-        res = H5ADFileProcessor(file_bytes_io, ext= 'h5Seurat')
+        res = H5ADFileProcessor(file_bytes_io)
         assert res
 
     def test_get_preview(self):
@@ -62,13 +60,13 @@ class TestH5ADFileProcessor:
 
     def test_get_preview_file_with_nans(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/follicular_sample.h5ad')
-        _, obs_preview, _ = H5ADFileProcessor(file_bytes_io, ext = 'h5ad').get_preview()
+        _, obs_preview, _ = H5ADFileProcessor(file_bytes_io).get_preview()
         for item in obs_preview:
             for value in item.values():
                 assert value is not nan
 
     def test_get_preview_file_no_rows(self):
         file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/liver_sample.h5ad')
-        target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io, ext = 'h5ad').get_preview()
+        target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io).get_preview()
         assert obs_preview != []
         assert var_preview == []
