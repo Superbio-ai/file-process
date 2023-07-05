@@ -22,7 +22,7 @@ class TestFileProcessFactory:
 
     def test_get_csv_processor(self):
         file_bytes_io = get_remote_file_obj(TestCSVFileProcessor.original_data_path)
-        res = FileProcessFactory.get(file_bytes_io)
+        res = FileProcessFactory.get(TestCSVFileProcessor.original_data_path, file_bytes_io)
         assert isinstance(res, CSVFileProcessor)
 
     def test_validate_wrong_extension(self):

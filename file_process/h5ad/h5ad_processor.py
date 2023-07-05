@@ -15,17 +15,17 @@ from file_process.h5ad.schemas import SbioModelDataForH5ad
 def _h5_process(file):
 
     data_mat = h5py.File(file, 'r')
-    X = np.array(data_mat['X'])
+    main_df = np.array(data_mat['X'])
     if 'Y' in data_mat:
-        Y = np.array(data_mat['Y'])
+        obs = np.array(data_mat['Y'])
     else:
-        Y = None
+        obs = None
     data_mat.close()
     
     # preprocessing scRNA-seq read counts matrix
-    adata = anndata.AnnData(X)
-    if Y is not None:
-        adata.obs['Group'] = Y
+    adata = anndata.AnnData(main_df)
+    if obs is not None:
+        adata.obs['Group'] = obs
 
     return adata
 
