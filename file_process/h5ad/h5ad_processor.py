@@ -13,7 +13,7 @@ from file_process.h5ad.schemas import SbioModelDataForH5ad
 
 
 class H5GenericProcessor(FileProcessorBase):
-    
+
     def validate(self, model_metadata_file: Optional[BytesIO] = None, _: Optional[dict] = None):
         model_data = None
         if model_metadata_file:
@@ -49,7 +49,7 @@ class H5GenericProcessor(FileProcessorBase):
             rows[index]['Feature Name'] = value
         return rows
 
-    
+
 class H5FileProcessor(H5GenericProcessor):
 
     def __init__(self, file, **_):
@@ -70,6 +70,6 @@ class H5FileProcessor(H5GenericProcessor):
 
 
 class H5ADFileProcessor(H5GenericProcessor):
-    
+
     def __init__(self, file, **_):
         self.adata = anndata.read_h5ad(file)

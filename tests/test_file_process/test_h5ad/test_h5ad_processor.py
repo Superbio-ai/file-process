@@ -28,8 +28,7 @@ class TestH5ADFileProcessor:
 
     def test_get_preview(self):
         file_bytes_io = get_remote_file_obj(self.path)
-        ext = self.path.split('.')[-1]
-        target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io, ext).get_preview()
+        target_names, obs_preview, var_preview = H5ADFileProcessor(file_bytes_io).get_preview()
         assert target_names == ['NRP', 'age_group', 'cell_source', 'cell_type', 'donor', 'gender', 'n_counts',
                                 'n_genes', 'percent_mito', 'percent_ribo', 'region', 'sample',  'scrublet_score',
                                 'source', 'type', 'version', 'cell_states', 'Used', '_scvi_batch', '_scvi_labels']

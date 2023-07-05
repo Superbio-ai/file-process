@@ -63,8 +63,7 @@ class TestH5ADValidator:
 
     def test_validate_check_normed_valid(self):
         file_bytes_io = get_remote_file_obj(self.path)
-        ext = self.path.split('.')[-1]
-        processor = H5ADFileProcessor(file_bytes_io, ext)
+        processor = H5ADFileProcessor(file_bytes_io)
         validator = H5ADValidator(processor.adata)
         validator._check_not_normed()
 
