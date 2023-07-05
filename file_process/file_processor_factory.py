@@ -8,6 +8,8 @@ from file_process.h5ad.h5ad_processor import H5ADFileProcessor
 class FileProcessFactory:  # pylint: disable=too-few-public-methods
     EXTENSIONS_MAP = {
         '.h5ad': H5ADFileProcessor,
+        '.h5': H5ADFileProcessor,
+        '.h5Seurat': H5ADFileProcessor,
         '.csv': CSVFileProcessor,
         '.txt': CSVFileProcessor,
         '.tsv': CSVFileProcessor,
@@ -17,7 +19,7 @@ class FileProcessFactory:  # pylint: disable=too-few-public-methods
     def get(cls, filename: str, file: BytesIO, **kwargs):
         for extension, processor_class in cls.EXTENSIONS_MAP.items():
             if filename.endswith(extension):
-                return processor_class(file, **kwargs)
+                return processor_class(file, extension, **kwargs)
         raise WrongExtension
 
     @classmethod

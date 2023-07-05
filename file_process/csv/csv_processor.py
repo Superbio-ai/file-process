@@ -24,10 +24,12 @@ class CSVFileProcessor(FileProcessorBase):
             self.delimiter = delimiter
         except ParserError as exc:
             raise FormatError() from exc
+        
         try:
             self.data_df = pd.read_csv(file, sep=self.delimiter)
         except ParserError as exc:
             raise DelimiterError() from exc
+        
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None, validation_rules: Optional[dict] = None):
         model_data = SbioModelDataForCsv(model_metadata_file) if model_metadata_file else None
