@@ -21,7 +21,7 @@ def _h5_process(file):
     else:
         obs = None
     data_mat.close()
-    
+
     # preprocessing scRNA-seq read counts matrix
     adata = anndata.AnnData(main_df)
     if obs is not None:
