@@ -3,6 +3,8 @@ from typing import List, Optional
 
 import anndata
 import pandas as pd
+import numpy as np
+import h5py
 
 from file_process.base import FileProcessorBase
 from file_process.constants import PREVIEW_ROWS_COUNT
@@ -10,10 +12,31 @@ from file_process.h5ad.h5ad_validator import H5ADValidator
 from file_process.h5ad.schemas import SbioModelDataForH5ad
 
 
+def _h5_process(file):
+    
+   data_mat = h5py.File(file, 'r')
+   x = np.array(data_mat['X'])
+   if 'Y' in data_mat:
+       y = np.array(data_mat['Y'])
+   else:
+       y = None
+   data_mat.close()
+
+   # preprocessing scRNA-seq read counts matrix
+   adata = anndata.AnnData(x)
+   if y is not None:
+       adata.obs['Group'] = y
+   
+   return adata
+
+
 class H5ADFileProcessor(FileProcessorBase):
 
-    def __init__(self, file, **_):
-        self.adata = anndata.read_h5ad(file)
+    def __init__(self, file, ext, **_):
+        if ext == 'h5':
+            self.adata = _h5_process(file)
+        elif ext in ['h5ad','h5Seurat']:
+            self.adata = anndata.read_h5ad(file)
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None, _: Optional[dict] = None):
         model_data = None
