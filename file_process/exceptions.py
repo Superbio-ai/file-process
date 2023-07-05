@@ -35,7 +35,7 @@ class DelimiterError(BaseError):
 class FormatError(BaseError):
     message = 'Parsing error: data not in a recognized tabular format.'
     
-    
+
 class NoColumnsError(BaseError):
     message = 'No columns in file.'
 
