@@ -11,6 +11,8 @@ from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
 class TestCSVFileProcessor:
     original_data_path = f'{CSV_INPUT_FILES_PATH}/original_data.csv'
+    txt_data_path = f'{CSV_INPUT_FILES_PATH}/wine_quality.txt'
+    tsv_data_path = f'{CSV_INPUT_FILES_PATH}/liver.tsv'
     MOCK_CONFIGS_PATH = f'{CSV_INPUT_FILES_PATH}/mock_configs'
     MOCK_DATA_PATH = f'{CSV_INPUT_FILES_PATH}/mock_data'
 
@@ -19,11 +21,21 @@ class TestCSVFileProcessor:
         file_obj = BytesIO(file.read())
         return file, file_obj
 
-    def test_read_file(self):
+    def test_read_csv(self):
         file_bytes_io = get_remote_file_obj(self.original_data_path)
         res = CSVFileProcessor(file_bytes_io)
         assert isinstance(res.data_df, pd.DataFrame)
 
+    def test_read_txt(self):
+        file_bytes_io = get_remote_file_obj(self.txt_data_path)
+        res = CSVFileProcessor(file_bytes_io)
+        assert isinstance(res.data_df, pd.DataFrame)
+    
+    def test_read_tsv(self):
+        file_bytes_io = get_remote_file_obj(self.tsv_data_path)
+        res = CSVFileProcessor(file_bytes_io)
+        assert isinstance(res.data_df, pd.DataFrame)
+    
     def test_get_preview(self):
         file_bytes_io = get_remote_file_obj(self.original_data_path)
         file_processor = CSVFileProcessor(file_bytes_io)

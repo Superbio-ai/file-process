@@ -18,7 +18,7 @@ class TestFileProcessFactory:
     def test_get_h5_processor_wrong_extension(self):
         file_bytes_io = get_remote_file_obj(TestH5ADFileProcessor.path)
         with pytest.raises(WrongExtension):
-            _ = FileProcessFactory.get('heart_atlas.h5', file_bytes_io)
+            _ = FileProcessFactory.get('heart_atlas.loom', file_bytes_io)
 
     def test_get_csv_processor(self):
         file_bytes_io = get_remote_file_obj(TestCSVFileProcessor.original_data_path)

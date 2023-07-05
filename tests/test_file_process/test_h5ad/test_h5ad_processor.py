@@ -1,6 +1,6 @@
 from numpy import nan
 
-from file_process.h5ad.h5ad_processor import H5ADFileProcessor
+from file_process.h5ad.h5ad_processor import H5ADFileProcessor, H5FileProcessor
 from tests.test_file_process import H5AD_INPUT_FILES_PATH, get_remote_file_obj
 
 
@@ -14,6 +14,16 @@ class TestH5ADFileProcessor:
 
     def test_read_file_from_path(self):
         res = H5ADFileProcessor(self.path)
+        assert res
+    
+    def test_read_h5_file(self):
+        file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/worm_neuron_cell.h5')
+        res = H5FileProcessor(file_bytes_io)
+        assert res
+    
+    def test_read_Seurat_file(self):
+        file_bytes_io = get_remote_file_obj(f'{H5AD_INPUT_FILES_PATH}/liver_sample.h5Seurat')
+        res = H5ADFileProcessor(file_bytes_io)
         assert res
 
     def test_get_preview(self):

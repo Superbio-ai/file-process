@@ -9,18 +9,22 @@ from file_process.base import FileProcessorBase
 from file_process.constants import PREVIEW_ROWS_COUNT
 from file_process.csv.csv_validator import CSVValidator
 from file_process.csv.schemas import SbioModelDataForCsv
-from file_process.exceptions import DelimiterError
+from file_process.exceptions import DelimiterError, FormatError
 
 
 class CSVFileProcessor(FileProcessorBase):
 
     def __init__(self, file: BytesIO, **kwargs):
         delimiter = kwargs.get('delimiter')
-        if not delimiter:
-            reader = pd.read_csv(file, sep=None, iterator=True, nrows=10)
-            delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
-            file.seek(0)
-        self.delimiter = delimiter
+        try:
+            if not delimiter:
+                reader = pd.read_csv(file, sep=None, iterator=True, nrows=10)
+                delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
+                file.seek(0)
+            self.delimiter = delimiter
+        except ParserError as exc:
+            raise FormatError() from exc
+
         try:
             self.data_df = pd.read_csv(file, sep=self.delimiter)
         except ParserError as exc:
