@@ -13,21 +13,21 @@ from file_process.h5ad.schemas import SbioModelDataForH5ad
 
 
 def _h5_process(file):
-    
-   data_mat = h5py.File(file, 'r')
-   x = np.array(data_mat['X'])
-   if 'Y' in data_mat:
-       y = np.array(data_mat['Y'])
-   else:
-       y = None
-   data_mat.close()
 
-   # preprocessing scRNA-seq read counts matrix
-   adata = anndata.AnnData(x)
-   if y is not None:
-       adata.obs['Group'] = y
-   
-   return adata
+    data_mat = h5py.File(file, 'r')
+    X = np.array(data_mat['X'])
+    if 'Y' in data_mat:
+        Y = np.array(data_mat['Y'])
+    else:
+        Y = None
+    data_mat.close()
+    
+    # preprocessing scRNA-seq read counts matrix
+    adata = anndata.AnnData(X)
+    if Y is not None:
+        adata.obs['Group'] = Y
+
+    return adata
 
 
 class H5ADFileProcessor(FileProcessorBase):
