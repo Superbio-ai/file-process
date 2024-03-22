@@ -27,7 +27,7 @@ class TestCSVFileProcessor:
     def test_get_preview(self):
         file_bytes_io = get_remote_file_obj(self.original_data_path)
         file_processor = CSVFileProcessor(file_bytes_io)
-        var_names, obs_preview, var_preview = file_processor.get_preview()
+        var_names, obs_preview, var_preview, _ = file_processor.get_preview()
         assert obs_preview == [
             {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
             {"sepal_length": 4.9, "sepal_width": 3.0, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
@@ -45,7 +45,7 @@ class TestCSVFileProcessor:
 
     def test_get_preview_file_with_nans(self):
         file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/follicular_obs_sample.csv')
-        var_names, obs_preview, var_preview = CSVFileProcessor(file_bytes_io).get_preview()
+        var_names, obs_preview, var_preview, _ = CSVFileProcessor(file_bytes_io).get_preview()
         for item in obs_preview:
             for value in item.values():
                 assert value is not nan

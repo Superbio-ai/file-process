@@ -13,6 +13,8 @@ class FileProcessFactory:  # pylint: disable=too-few-public-methods
         '.txt': TxtFileProcessor
     }
 
+    # TODO: Add pdb, fasta as txt, add tsv as csv
+
     @classmethod
     def get(cls, filename: str, file: BytesIO, **kwargs):
         for extension, processor_class in cls.EXTENSIONS_MAP.items():

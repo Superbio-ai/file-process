@@ -16,7 +16,7 @@ from file_process.exceptions import DelimiterError
 class TxtFileProcessor(FileProcessorBase):
 
     def __init__(self, file: BytesIO, **kwargs):
-        self.txt_data = file.read()
+        self.txt_data = str(file.read(), encoding='utf-8')
 
     def get_preview(self):
         return None, None, None, self.txt_data
