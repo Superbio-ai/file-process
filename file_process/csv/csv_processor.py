@@ -24,7 +24,6 @@ class CSVFileProcessor(FileProcessorBase):
             try:
                 delimiter = sniffer.sniff(str(data, encoding='utf-8')).delimiter
             except _csv.Error as e:
-                print("Error occurred while determining delimiter:", e)
                 delimiter = ","
             file.seek(0)
         self.delimiter = delimiter
