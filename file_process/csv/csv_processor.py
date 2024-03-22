@@ -1,6 +1,7 @@
 from typing import List, Optional
 from io import BytesIO
 import csv
+import _csv
 
 import pandas as pd
 from numpy import number, nan
@@ -22,7 +23,8 @@ class CSVFileProcessor(FileProcessorBase):
             data = file.read(4096)
             try:
                 delimiter = sniffer.sniff(str(data, encoding='utf-8')).delimiter
-            except:
+            except _csv.Error as e:
+                print("Error occurred while determining delimiter:", e)
                 delimiter = ","
             file.seek(0)
         self.delimiter = delimiter

@@ -11,6 +11,7 @@ from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
 class TestCSVFileProcessor:
     original_data_path = f'{CSV_INPUT_FILES_PATH}/original_data.csv'
+    single_column_data_path = f'{CSV_INPUT_FILES_PATH}/single_column_data.csv'
     tsv_data_path = f'{CSV_INPUT_FILES_PATH}/tsv_example.tsv'
     MOCK_CONFIGS_PATH = f'{CSV_INPUT_FILES_PATH}/mock_configs'
     MOCK_DATA_PATH = f'{CSV_INPUT_FILES_PATH}/mock_data'
@@ -43,6 +44,22 @@ class TestCSVFileProcessor:
         ]
         assert var_preview == None
         assert var_names == ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
+
+    def test_get_preview_single_column(self):
+        file_bytes_io = get_remote_file_obj(self.single_column_data_path)
+        file_processor = CSVFileProcessor(file_bytes_io)
+        var_names, obs_preview, var_preview, _ = file_processor.get_preview()
+        assert obs_preview == [
+            {"sepal_length": 5.1},
+            {"sepal_length": 4.9},
+            {"sepal_length": 4.7},
+            {"sepal_length": 4.6},
+            {"sepal_length": 5.0},
+            {"sepal_length": 5.4},
+            {"sepal_length": 4.6},
+        ]
+        assert var_preview == None
+        assert var_names == ["sepal_length"]
 
     def test_get_preview_file_with_nans(self):
         file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/follicular_obs_sample.csv')
