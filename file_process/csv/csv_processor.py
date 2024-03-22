@@ -21,7 +21,7 @@ class CSVFileProcessor(FileProcessorBase):
             sniffer = csv.Sniffer()
             data = file.read(4096)
             try:
-                delimiter = sniffer.sniff(data).delimiter
+                delimiter = sniffer.sniff(str(data, encoding='utf-8')).delimiter
             except:
                 delimiter = ","
             file.seek(0)

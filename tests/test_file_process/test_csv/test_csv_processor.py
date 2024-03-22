@@ -11,6 +11,7 @@ from tests.test_file_process import CSV_INPUT_FILES_PATH, get_remote_file_obj
 
 class TestCSVFileProcessor:
     original_data_path = f'{CSV_INPUT_FILES_PATH}/original_data.csv'
+    tsv_data_path = f'{CSV_INPUT_FILES_PATH}/tsv_example.tsv'
     MOCK_CONFIGS_PATH = f'{CSV_INPUT_FILES_PATH}/mock_configs'
     MOCK_DATA_PATH = f'{CSV_INPUT_FILES_PATH}/mock_data'
 
@@ -54,3 +55,16 @@ class TestCSVFileProcessor:
         file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/csv_example.csv')
         with pytest.raises(DelimiterError):
             _ = CSVFileProcessor(file_bytes_io, delimiter='.')
+
+    def test_tsv_preview(self):
+        file_bytes_io = get_remote_file_obj(self.tsv_data_path)
+        file_processor = CSVFileProcessor(file_bytes_io)
+        var_names, obs_preview, var_preview, _ = file_processor.get_preview()
+        assert obs_preview == [
+            {"FID": 0, "IID": 0, "cov1": 0.09, "cov2": 0.69, "target_label": 1.2},
+            {"FID": 1, "IID": 1, "cov1": 0.24, "cov2": 0.54, "target_label": 1.1},
+            {"FID": 2, "IID": 2, "cov1": 0.31, "cov2": 0.01, "target_label": 0.3},
+        ]
+        assert var_preview == None
+        assert var_names == ["FID", "IID", "cov1", "cov2", "target_label"]
+

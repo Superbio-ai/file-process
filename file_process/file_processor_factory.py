@@ -10,10 +10,11 @@ class FileProcessFactory:  # pylint: disable=too-few-public-methods
     EXTENSIONS_MAP = {
         '.h5ad': H5ADFileProcessor,
         '.csv': CSVFileProcessor,
-        '.txt': TxtFileProcessor
+        '.tsv': CSVFileProcessor,
+        '.txt': TxtFileProcessor,
+        '.pdb': TxtFileProcessor,
+        '.fasta': TxtFileProcessor,
     }
-
-    # TODO: Add pdb, fasta as txt, add tsv as csv
 
     @classmethod
     def get(cls, filename: str, file: BytesIO, **kwargs):
