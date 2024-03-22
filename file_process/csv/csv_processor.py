@@ -1,5 +1,6 @@
 from typing import List, Optional
 from io import BytesIO
+import csv
 
 import pandas as pd
 from numpy import number, nan
@@ -17,8 +18,12 @@ class CSVFileProcessor(FileProcessorBase):
     def __init__(self, file: BytesIO, **kwargs):
         delimiter = kwargs.get('delimiter')
         if not delimiter:
-            reader = pd.read_csv(file, sep=None, iterator=True, nrows=10)
-            delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
+            sniffer = csv.Sniffer()
+            data = file.read(4096)
+            try:
+                delimiter = sniffer.sniff(data).delimiter
+            except:
+                delimiter = ","
             file.seek(0)
         self.delimiter = delimiter
         try:
