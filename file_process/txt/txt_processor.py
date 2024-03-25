@@ -6,7 +6,7 @@ from file_process.base import FileProcessorBase
 
 class TxtFileProcessor(FileProcessorBase):
 
-    def __init__(self, file: BytesIO, **kwargs):
+    def __init__(self, file: BytesIO, **_):
         self.txt_data = str(file.read(), encoding='utf-8')
 
     def get_preview(self):
