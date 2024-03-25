@@ -1,5 +1,7 @@
 from typing import List, Optional
 from io import BytesIO
+import csv
+import _csv
 
 import pandas as pd
 from numpy import number, nan
@@ -17,8 +19,12 @@ class CSVFileProcessor(FileProcessorBase):
     def __init__(self, file: BytesIO, **kwargs):
         delimiter = kwargs.get('delimiter')
         if not delimiter:
-            reader = pd.read_csv(file, sep=None, iterator=True, nrows=10)
-            delimiter = reader._engine.data.dialect.delimiter  # pylint: disable=protected-access
+            sniffer = csv.Sniffer()
+            data = file.read(4096)
+            try:
+                delimiter = sniffer.sniff(str(data, encoding='utf-8')).delimiter
+            except _csv.Error:
+                delimiter = ","
             file.seek(0)
         self.delimiter = delimiter
         try:
@@ -41,7 +47,7 @@ class CSVFileProcessor(FileProcessorBase):
     def get_preview(self):
         var_names = self.get_var_names()
         obs_preview = self.get_observations(PREVIEW_ROWS_COUNT)
-        return var_names, self.create_tabular_response(obs_preview), None
+        return var_names, self.create_tabular_response(obs_preview), None, None
 
     @staticmethod
     def create_tabular_response(data_df: pd.DataFrame) -> List[dict]:

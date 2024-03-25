@@ -3,12 +3,17 @@ from io import BytesIO
 from file_process.csv.csv_processor import CSVFileProcessor
 from file_process.exceptions import WrongExtension
 from file_process.h5ad.h5ad_processor import H5ADFileProcessor
+from file_process.txt.txt_processor import TxtFileProcessor
 
 
 class FileProcessFactory:  # pylint: disable=too-few-public-methods
     EXTENSIONS_MAP = {
         '.h5ad': H5ADFileProcessor,
-        '.csv': CSVFileProcessor
+        '.csv': CSVFileProcessor,
+        '.tsv': CSVFileProcessor,
+        '.txt': TxtFileProcessor,
+        '.pdb': TxtFileProcessor,
+        '.fasta': TxtFileProcessor,
     }
 
     @classmethod

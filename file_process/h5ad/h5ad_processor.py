@@ -35,7 +35,7 @@ class H5ADFileProcessor(FileProcessorBase):
         target_names = self.get_targets()
         obs_preview = self.get_observations(PREVIEW_ROWS_COUNT)
         var_preview = self.get_variables(PREVIEW_ROWS_COUNT)
-        return target_names, self.create_tabular_response(obs_preview), self.create_tabular_response(var_preview)
+        return target_names, self.create_tabular_response(obs_preview), self.create_tabular_response(var_preview), None
 
     @staticmethod
     def create_tabular_response(data_df: pd.DataFrame) -> List[dict]:
