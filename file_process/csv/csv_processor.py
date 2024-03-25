@@ -23,7 +23,7 @@ class CSVFileProcessor(FileProcessorBase):
             data = file.read(4096)
             try:
                 delimiter = sniffer.sniff(str(data, encoding='utf-8')).delimiter
-            except _csv.Error as e:
+            except _csv.Error:
                 delimiter = ","
             file.seek(0)
         self.delimiter = delimiter
