@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name="file_process",
-      version="1.3.0",
+      version="1.3.1",
       description="A package that does file validation and file preview.",
       license='MIT',
       author="superbio.ai",

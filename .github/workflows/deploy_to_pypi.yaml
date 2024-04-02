@@ -7,21 +7,23 @@ on:
       - 'setup.py'
 
 jobs:
-  build:
+  pypi-publish:
+    name: Upload release to PyPI
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/process
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-      - name: Install package used for deployment
-        run: |
-          pip install twine
-      - name: Build and push package to pypi
-        env:
-          PYPI_USER: ${{ secrets.PYPI_USER }}
-          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          python setup.py sdist
-          twine upload dist/* -u "$PYPI_USER" -p "$PYPI_PASSWORD"
+
+      - name: Retrieve distributions
+        run: python setup.py sdist
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
