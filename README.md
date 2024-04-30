@@ -6,6 +6,10 @@ Currenty supported extensions:
 
 - .h5ad
 - .csv
+- .tsv
+- .txt
+- .pdb
+- .fasta
 
 Usage:
 
@@ -31,3 +35,9 @@ where:
 
 The code returns a list of targets (columns from the validated file), var preview and obs preview.
 If some is not applicable for the file, None will be returned).
+
+How to release:
+
+1. Make your changes
+2. Change the version in setup.py
+3. Merge changes into the main branch; it will be automatically released to [pypi](https://pypi.org/project/file-process/#history)
