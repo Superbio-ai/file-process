@@ -22,8 +22,8 @@ class H5ADFileProcessor(FileProcessorBase):
         validator = H5ADValidator(self.adata, model_data, enable_warnings=False)
         validator()
 
-    def get_targets(self):
-        return list(self.adata.obs.columns)
+    def get_targets(self, is_var_targets: Optional[bool] = False):
+        return list(self.adata.var.columns) if is_var_targets else list(self.adata.obs.columns)
 
     def get_observations(self, rows_number: Optional[int] = None):
         return self.adata.obs.head(n=rows_number)
@@ -31,8 +31,8 @@ class H5ADFileProcessor(FileProcessorBase):
     def get_variables(self, rows_number: Optional[int] = None):
         return self.adata.var.head(n=rows_number)
 
-    def get_preview(self):
-        target_names = self.get_targets()
+    def get_preview(self, is_var_targets: Optional[bool] = False):
+        target_names = self.get_targets(is_var_targets)
         obs_preview = self.get_observations(PREVIEW_ROWS_COUNT)
         var_preview = self.get_variables(PREVIEW_ROWS_COUNT)
         return target_names, self.create_tabular_response(obs_preview), self.create_tabular_response(var_preview), None
