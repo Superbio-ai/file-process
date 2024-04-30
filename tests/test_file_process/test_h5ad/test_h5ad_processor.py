@@ -19,18 +19,9 @@ class TestH5ADFileProcessor:
     def test_get_targets_obs_mode(self):
         file_bytes_io = get_remote_file_obj(self.path)
         target_names = H5ADFileProcessor(file_bytes_io).get_targets(True)
-        assert target_names == [
-            "Feature Name",
-            "gene_ids-Harvard-Nuclei",
-            "feature_types-Harvard-Nuclei",
-            "gene_ids-Sanger-Nuclei",
-            "feature_types-Sanger-Nuclei",
-            "gene_ids-Sanger-Cells",
-            "feature_types-Sanger-Cells",
-            "gene_ids-Sanger-CD45",
-            "feature_types-Sanger-CD45",
-            "n_counts"
-        ]
+        assert target_names == ['gene_ids-Harvard-Nuclei', 'feature_types-Harvard-Nuclei', 'gene_ids-Sanger-Nuclei',
+                                'feature_types-Sanger-Nuclei', 'gene_ids-Sanger-Cells', 'feature_types-Sanger-Cells',
+                                'gene_ids-Sanger-CD45', 'feature_types-Sanger-CD45', 'n_counts']
 
     def test_get_preview(self):
         file_bytes_io = get_remote_file_obj(self.path)
