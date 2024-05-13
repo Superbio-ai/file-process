@@ -27,7 +27,7 @@ class TestTxtFileProcessor:
     def test_get_preview(self):
         file_bytes_io = get_remote_file_obj(self.original_data_path)
         file_processor = TxtFileProcessor(file_bytes_io)
-        _, _, _, text_file_preview = file_processor.get_preview()
+        _, _, _, _, text_file_preview = file_processor.get_preview()
 
         assert text_file_preview == """IQGIZBXAZYBADFENHMYLCWYTCOLEZQTEBIMAFMGGOBMHIBCBMPCPXCXHHZLWGNMAYCXLCVMOFVNBRFPIGYNWDMOCMVHNUITUHGZKZFQ
 HONIYRGFSELKIWFCKUUQQTFORXFVCFHDVUASLZOTLYDCSDFVUOBIOFQCONFSQIFWOAFMYBLBAISKUTRNDZGNVLUFGREFOYUZFLRRIUMQYTNXKEGPDYSWSOEPDXBPPMNTHQQUV
