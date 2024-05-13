@@ -29,7 +29,7 @@ class TestCSVFileProcessor:
     def test_get_preview(self):
         file_bytes_io = get_remote_file_obj(self.original_data_path)
         file_processor = CSVFileProcessor(file_bytes_io)
-        var_names, obs_preview, var_preview, _ = file_processor.get_preview()
+        var_names, _, obs_preview, var_preview, _ = file_processor.get_preview()
         assert obs_preview == [
             {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
             {"sepal_length": 4.9, "sepal_width": 3.0, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa"},
@@ -48,7 +48,7 @@ class TestCSVFileProcessor:
     def test_get_preview_single_column(self):
         file_bytes_io = get_remote_file_obj(self.single_column_data_path)
         file_processor = CSVFileProcessor(file_bytes_io)
-        var_names, obs_preview, var_preview, _ = file_processor.get_preview()
+        var_names, _, obs_preview, var_preview, _ = file_processor.get_preview()
         assert obs_preview == [
             {"sepal_length": 5.1},
             {"sepal_length": 4.9},
@@ -63,7 +63,7 @@ class TestCSVFileProcessor:
 
     def test_get_preview_file_with_nans(self):
         file_bytes_io = get_remote_file_obj(f'{CSV_INPUT_FILES_PATH}/follicular_obs_sample.csv')
-        var_names, obs_preview, var_preview, _ = CSVFileProcessor(file_bytes_io).get_preview()
+        var_names, _, obs_preview, var_preview, _ = CSVFileProcessor(file_bytes_io).get_preview()
         for item in obs_preview:
             for value in item.values():
                 assert value is not nan
@@ -76,7 +76,7 @@ class TestCSVFileProcessor:
     def test_tsv_preview(self):
         file_bytes_io = get_remote_file_obj(self.tsv_data_path)
         file_processor = CSVFileProcessor(file_bytes_io)
-        var_names, obs_preview, var_preview, _ = file_processor.get_preview()
+        var_names, _, obs_preview, var_preview, _ = file_processor.get_preview()
         assert obs_preview == [
             {"FID": 0, "IID": 0, "cov1": 0.09, "cov2": 0.69, "target_label": 1.2},
             {"FID": 1, "IID": 1, "cov1": 0.24, "cov2": 0.54, "target_label": 1.1},
