@@ -22,8 +22,13 @@ jobs:
         with:
           python-version: 3.8
 
-      - name: Retrieve distributions
-        run: python setup.py sdist
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build distributions
+        run: python -m build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
