@@ -9,5 +9,5 @@ class FileProcessorBase(ABC):
         pass
 
     @abstractmethod
-    def get_preview(self) -> (List[str], List[dict], List[dict]):
+    def get_preview(self) -> (List[str], List[str], List[dict], List[dict], str):
         pass

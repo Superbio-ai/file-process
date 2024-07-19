@@ -47,7 +47,7 @@ class CSVFileProcessor(FileProcessorBase):
     def get_preview(self):
         var_names = self.get_var_names()
         obs_preview = self.get_observations(PREVIEW_ROWS_COUNT)
-        return var_names, self.create_tabular_response(obs_preview), None, None
+        return var_names, None, self.create_tabular_response(obs_preview), None, None
 
     @staticmethod
     def create_tabular_response(data_df: pd.DataFrame) -> List[dict]:
