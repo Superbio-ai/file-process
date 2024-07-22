@@ -1,14 +1,51 @@
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 from anndata import AnnData
-from scanpy.get import _get_obs_rep
-from scipy.sparse import issparse
+from scipy.sparse import issparse, spmatrix
+import pandas as pd
 
 from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError, NoXExpression, \
     DataIsNormalized, DataIsNotFinite
 from file_process.h5ad.schemas import SbioModelDataForH5ad
 from file_process.logger import logger
+
+
+def _get_obs_rep(
+        adata: AnnData,
+        *,
+        use_raw: bool = False,
+        layer: Optional[str] = None,
+        obsm: Optional[str] = None,
+        obsp: Optional[str] = None,
+) -> Union[np.ndarray, spmatrix, pd.DataFrame, None]:
+    """
+    Choose array aligned with obs annotation.
+    """
+    # https://github.com/scverse/scanpy/issues/1546
+    if not isinstance(use_raw, bool):
+        raise TypeError(f"use_raw expected to be bool, was {type(use_raw)}.")
+
+    is_layer = layer is not None
+    is_raw = use_raw is not False
+    is_obsm = obsm is not None
+    is_obsp = obsp is not None
+    choices_made = sum((is_layer, is_raw, is_obsm, is_obsp))
+    assert choices_made in {0, 1}
+    if choices_made == 0:
+        return adata.X
+    if is_layer:
+        return adata.layers[layer]
+    if use_raw:
+        return adata.raw.X
+    if is_obsm:
+        return adata.obsm[obsm]
+    if is_obsp:
+        return adata.obsp[obsp]
+    raise AssertionError(
+        "That was unexpected. Please report this bug at:\n\n\t"
+        "https://github.com/scverse/scanpy/issues"
+    )
 
 
 class H5ADValidator:
