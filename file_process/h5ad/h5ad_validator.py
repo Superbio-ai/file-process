@@ -4,8 +4,6 @@ import numpy as np
 from anndata import AnnData
 from scipy.sparse import issparse, spmatrix
 import pandas as pd
-# from anndata._core.views import ArrayView
-# from anndata._core.sparse_dataset import BaseCompressedSparseDataset
 
 from file_process.exceptions import NoColumnsError, ModelFileValidationVariablesError, NoXExpression, \
     DataIsNormalized, DataIsNotFinite
