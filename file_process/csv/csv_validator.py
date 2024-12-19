@@ -47,7 +47,7 @@ class CSVValidator:
 
     def _validate_columns(self):
         rules = {c.name: c for c in self.rules.columns}
-        for name, data in self.data_df.iteritems():
+        for name, data in self.data_df.items():
             if name in rules:
                 self._validate_column(str(name), data, rules[name])
 
