@@ -106,7 +106,7 @@ class H5ADValidator:
     def _check_not_normed(self, obs_key: Optional[str] = None):
         data = _get_obs_rep(self.adata, layer=obs_key)
         if issparse(data):
-            diff_sum = len(np.unique(np.round(data.A.sum(axis=1), 0), axis=0))
+            diff_sum = len(np.unique(np.round(data.toarray().sum(axis=1), 0), axis=0))
         else:
             diff_sum = len(np.unique(np.round(data.sum(axis=1), 0), axis=0))
         if diff_sum <= 2:
@@ -115,7 +115,7 @@ class H5ADValidator:
     def _check_finite(self, obs_key: Optional[str] = None):
         data = _get_obs_rep(self.adata, layer=obs_key)
         if issparse(data):
-            is_finite = np.isfinite(data.A).all()
+            is_finite = np.isfinite(data.toarray()).all()
         else:
             is_finite = np.isfinite(data).all()
         if not is_finite:

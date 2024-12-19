@@ -122,7 +122,7 @@ class TestCSVValidator:
         processor = CSVFileProcessor(file_bytes_io)
         validator = CSVValidator(processor.data_df, None)
 
-        for name, data in processor.data_df.iteritems():
+        for name, data in processor.data_df.items():
             if name != column_name:
                 continue
             rule = ColumnValidationRule(validation_dict)
@@ -143,7 +143,7 @@ class TestCSVValidator:
         processor = CSVFileProcessor(file_bytes_io)
         validator = CSVValidator(processor.data_df, None)
 
-        for name, data in processor.data_df.iteritems():
+        for name, data in processor.data_df.items():
             if name != column_name:
                 continue
             rule = ColumnValidationRule(validation_dict)
