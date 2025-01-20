@@ -13,9 +13,12 @@ from file_process.h5ad.schemas import SbioModelDataForH5ad
 class H5ADFileProcessor(FileProcessorBase):
 
     def __init__(self, file, **_):
-        self.adata = anndata.read_h5ad(file)
+        self.file = file
+        self.adata = anndata.read_h5ad(file, backed="r")
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None, _: Optional[dict] = None):
+        if self.adata.isbacked:
+            self.adata = anndata.read_h5ad(self.file)
         model_data = None
         if model_metadata_file:
             model_data = SbioModelDataForH5ad(model_metadata_file)
