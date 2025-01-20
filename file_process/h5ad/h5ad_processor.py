@@ -16,7 +16,6 @@ class H5ADFileProcessor(FileProcessorBase):
 
     def __init__(self, file, **_):
         if isinstance(file, BytesIO):
-            # If file is a BytesIO object, write it to a temporary file
             with tempfile.NamedTemporaryFile(suffix=".h5ad", delete=False) as temp_file:
                 temp_file.write(file.getvalue())
                 temp_file_path = temp_file.name
