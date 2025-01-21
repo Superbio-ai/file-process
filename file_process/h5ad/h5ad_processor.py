@@ -1,3 +1,5 @@
+import os
+import tempfile
 from io import BytesIO
 from typing import List, Optional
 
@@ -13,7 +15,19 @@ from file_process.h5ad.schemas import SbioModelDataForH5ad
 class H5ADFileProcessor(FileProcessorBase):
 
     def __init__(self, file, **_):
-        self.adata = anndata.read_h5ad(file)
+        if isinstance(file, BytesIO):
+            with tempfile.NamedTemporaryFile(suffix=".h5ad", delete=False) as temp_file:
+                temp_file.write(file.getvalue())
+                temp_file_path = temp_file.name
+        elif isinstance(file, str):
+            temp_file_path = file
+        else:
+            raise TypeError(f"Unsupported file type: {type(file)}")
+
+        self.adata = anndata.read_h5ad(temp_file_path)
+
+        if isinstance(file, BytesIO):
+            os.remove(temp_file_path)
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None, _: Optional[dict] = None):
         model_data = None
