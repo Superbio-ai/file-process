@@ -15,19 +15,18 @@ from file_process.h5ad.schemas import SbioModelDataForH5ad
 class H5ADFileProcessor(FileProcessorBase):
 
     def __init__(self, file, **_):
+        self.temp_file_path = None
+
         if isinstance(file, BytesIO):
             with tempfile.NamedTemporaryFile(suffix=".h5ad", delete=False) as temp_file:
                 temp_file.write(file.getvalue())
-                temp_file_path = temp_file.name
+                self.temp_file_path = temp_file.name
         elif isinstance(file, str):
-            temp_file_path = file
+            self.temp_file_path = file
         else:
             raise TypeError(f"Unsupported file type: {type(file)}")
 
-        self.adata = anndata.read_h5ad(temp_file_path)
-
-        if isinstance(file, BytesIO):
-            os.remove(temp_file_path)
+        self.adata = anndata.read_h5ad(self.temp_file_path, backed="r")
 
     def validate(self, model_metadata_file: Optional[BytesIO] = None, _: Optional[dict] = None):
         model_data = None
@@ -68,3 +67,8 @@ class H5ADFileProcessor(FileProcessorBase):
         for index, value in enumerate(indices):
             rows[index]['Feature Name'] = value
         return rows
+
+    def cleanup_temp_files(self):
+        if os.path.exists(self.temp_file_path):
+            self.adata.file.close()
+            os.remove(self.temp_file_path)
