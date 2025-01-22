@@ -11,3 +11,7 @@ class FileProcessorBase(ABC):
     @abstractmethod
     def get_preview(self) -> (List[str], List[str], List[dict], List[dict], str):
         pass
+
+    def cleanup_temp_files(self) -> ():
+        pass
+

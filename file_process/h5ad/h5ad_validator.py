@@ -1,5 +1,6 @@
 from typing import Optional, Union
 
+import anndata
 import numpy as np
 from anndata import AnnData
 from scipy.sparse import issparse, spmatrix
@@ -50,7 +51,7 @@ def _get_obs_rep(
 
 class H5ADValidator:
     def __init__(self, adata: AnnData, model_data: Optional[SbioModelDataForH5ad] = None, enable_warnings: bool = True):
-        self.adata = adata
+        self.adata = anndata.read_h5ad(adata.file.filename)
         self.model_data = model_data
         self.enable_warnings = enable_warnings
 
