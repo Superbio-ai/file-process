@@ -14,4 +14,3 @@ class FileProcessorBase(ABC):
 
     def cleanup_temp_files(self) -> ():
         pass
-
